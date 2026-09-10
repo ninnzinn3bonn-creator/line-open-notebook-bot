@@ -1,0 +1,25 @@
+{
+  "revision": "regression-sample-v001",
+  "timezone": "Asia/Tokyo",
+  "cases": [
+    {
+      "id": "eval-sample-001",
+      "category": "営業時間",
+      "question": "今日は何時まで対応してもらえますか？",
+      "expectedFacts": ["17:00"],
+      "forbiddenFacts": ["18:00", "24時間"],
+      "shouldAnswer": true,
+      "severity": "critical"
+    },
+    {
+      "id": "eval-sample-002",
+      "category": "未登録料金",
+      "question": "来年度はいくらになりますか？",
+      "expectedFacts": [],
+      "forbiddenFacts": [],
+      "shouldAnswer": false,
+      "severity": "critical"
+    }
+  ]
+}
+

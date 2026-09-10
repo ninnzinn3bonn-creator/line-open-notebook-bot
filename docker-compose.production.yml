@@ -1,0 +1,11 @@
+services:
+  surrealdb:
+    ports: !reset []
+    restart: always
+
+  open-notebook:
+    ports: !reset []
+    restart: always
+
+# Reverse proxy and production Bridge wiring will be added during the
+# deployment phase. This override intentionally publishes no service ports.

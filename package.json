@@ -1,0 +1,25 @@
+{
+  "name": "line-open-notebook-bot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx bridge/src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "eval": "tsx evaluation/runner/index.ts",
+    "inspect:openapi": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/inspect-openapi.ps1"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.2",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "modelProfiles": {
+    "groq-120b": {
+      "provider": "groq",
+      "languageModel": "openai/gpt-oss-120b",
+      "embeddingProfile": "default"
+    },
+    "groq-20b": {
+      "provider": "groq",
+      "languageModel": "openai/gpt-oss-20b",
+      "embeddingProfile": "default"
+    },
+    "gemini-flash": {
+      "provider": "gemini",
+      "languageModelEnv": "GEMINI_EVALUATION_MODEL",
+      "embeddingProfile": "default"
+    }
+  }
+}
+

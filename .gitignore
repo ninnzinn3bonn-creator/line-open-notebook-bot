@@ -1,0 +1,17 @@
+.env
+*.db
+*.db-shm
+*.db-wal
+node_modules/
+dist/
+coverage/
+notebook_data/
+surreal_data/
+evaluation/datasets/private/*
+!evaluation/datasets/private/.gitkeep
+evaluation/results/*
+!evaluation/results/.gitkeep
+evaluation/baselines/*.json
+logs/
+openapi/openapi.json
+
