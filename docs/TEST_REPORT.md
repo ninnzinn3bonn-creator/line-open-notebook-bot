@@ -19,8 +19,13 @@
 | Docker Desktop導入 | PASS | 4.90.0をインストール |
 | ローカル隔離Compose定義 | PASS | 専用project/volume、loopback port、約3.3GBのサービス上限。Compose設定展開成功 |
 | ローカル検証スクリプト | PASS | PowerShell構文解析成功。認証情報生成、起動、smoke、停止、専用volume初期化を実装 |
-| WSL 2導入 | PASS (REBOOT PENDING) | `wsl --install --no-distribution`終了コード0、WSL 2.7.13・kernel 6.18.33.2を確認。Windows再起動待ち |
-| ローカルOpen Notebook実起動 | NOT RUN | Windows再起動後にDocker Engineを起動して実施 |
+| WSL 2導入 | PASS | WSL 2.7.13、kernel 6.18.33.2、Docker Engine 29.7.2を確認 |
+| ローカルOpen Notebook実起動 | PASS | Open Notebook 1.14.0とSurrealDBが専用Compose内でhealthy |
+| ローカルOpen Notebook UI | PASS | `http://127.0.0.1:18502`がHTTP 200 |
+| ローカルOpen Notebook API | PASS | `/health`、`/docs`、`/openapi.json`がHTTP 200。OpenAPI SHA-256 `14b99996837840df7713a4253cc8c7dfe65cfef5fa4cb2ef218fb0a750c22f39` |
+| コンテナImage固定 | PASS | Open Notebook digest `sha256:e53f90d6153fcf4a64604d9a0c12cb0428a32cfb8dbcbb72e81ab12c013ee330`、SurrealDB digest `sha256:d653f6c8a89e81f865ee31cd2f587c50f50ace922175e04150b1e385d2f86011` |
+| 4GB相当リソース初期確認 | PASS | 上限Open Notebook 2.5GiB、SurrealDB 768MiB。起動直後実使用約311MiB＋66MiB |
+| ローカル外部AI API | BLOCKED | Open NotebookのProvider登録0件。Google/Groq等のCredentialが必要 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |
