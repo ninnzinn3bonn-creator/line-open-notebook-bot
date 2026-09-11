@@ -44,6 +44,29 @@ Open Notebookの公式ドキュメントでは最小メモリが4GBとされて�
 
 VPS本体だけなら月1,760円、最低限の外部バックアップを含めても月2,000円前後を初期予算とする。AI API料金とLINE Messaging API料金は利用量に応じて別管理する。
 
+## 月10人・1人5往復の場合のAI API概算
+
+月10人、1人あたり5回の質問と回答を行う前提を、月50回答として計算する。標準ケースでは1回答あたり入力5,000 tokens、出力500 tokensとする。入力にはSystem Prompt、検索したKnowledge、質問、必要な会話履歴を含む。円換算は比較用に1 USD = 150円とする。
+
+| モデル候補 | 公式単価（100万tokens） | 50回答・1モデル呼出し/回答 | 3モデル呼出し/回答の概算 |
+|---|---:|---:|---:|
+| Groq GPT-OSS 20B | 入力$0.075、出力$0.30 | 約4円/月 | 約12円/月 |
+| Groq GPT-OSS 120B | 入力$0.15、出力$0.60 | 約8円/月 | 約24円/月 |
+| Gemini 3.1 Flash-Lite | 入力$0.25、出力$1.50 | 約15円/月 | 約45円/月 |
+| Gemini 3.7 Flash | 入力$0.75、出力$3.75（2026年末までの表示価格） | 約42円/月 | 約127円/月 |
+
+公式単価:
+
+- [Groq GPT-OSS 20B](https://console.groq.com/docs/model/openai/gpt-oss-20b)
+- [Groq GPT-OSS 120B](https://console.groq.com/docs/model/openai/gpt-oss-120b)
+- [Gemini API Pricing](https://ai.google.dev/gemini-api/docs/pricing)
+
+Open Notebookの実APIでstrategy、answer、final answer等の複数呼出しが必要な場合に備え、表では3回分も示した。各段階の実トークン量は同一ではないため、これは上限寄りの比較値である。実装後はProviderが返すUsageを役割別に保存して実測へ置き換える。
+
+Embeddingは`gemini-embedding-001`の有料単価が入力100万tokensあたり$0.15である。質問50件のEmbedding費用は1円未満になる見込みで、Knowledge 100万tokensを全件Embeddingしても約23円の一時費用である。
+
+本番会話だけならAI API予算を月300円確保すれば余裕がある。PoCでは30〜50問を複数モデルで実行する回帰テストの方が本番会話より呼出し回数が多くなるため、月1回の回帰テストとLLM Judgeを含めて月1,000円をAI API予算の上限目安とする。無料枠は費用計画に含めない。
+
 ## バックアップ費用
 
 VPSのスナップショットだけを唯一のバックアップにしない。SurrealDB export、設定ファイル、Knowledge原本を定期的に外部へ保存する。
