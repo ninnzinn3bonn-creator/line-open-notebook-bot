@@ -33,6 +33,7 @@
 | ローカル再起動永続性 | PASS | Open Notebook再起動後も2 Provider、既定モデル、埋込みSourceを保持し、Groq 120B最終で11.6秒の再回答に成功 |
 | Groq無料枠連続Ask | FAIL (EXPECTED LIMIT) | Strategy・Answer・FinalをすべてGroq 120Bにした連続GUI試験で`Rate limit exceeded`を4回確認。サービスとDBはhealthyを維持 |
 | 無料枠向け安定構成 | APPLIED | 既定Chatを`gemini-3.6-flash`へ戻し、Embeddingは`gemini-embedding-001`を維持。Groq 120BはFinalのみで比較する |
+| Bridge緊急回答 | PASS (UNIT) | Providerの有限再試行終了後に設定文面をSQLiteへ保存し、通常のReply/Push状態で1回送信。原因を`last_error`へ保持 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |

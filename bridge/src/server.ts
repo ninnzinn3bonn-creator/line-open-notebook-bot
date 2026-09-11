@@ -27,7 +27,8 @@ if (accessToken) {
     leaseMs: Number(process.env.WORKER_LEASE_MS ?? 120_000),
     maxRetries: Number(process.env.MAX_RETRIES ?? 2),
     retryDelayMs: Number(process.env.RETRY_DELAY_MS ?? 2_000),
-    replyCutoffMs: Number(process.env.LINE_REPLY_CUTOFF_MS ?? 45_000)
+    replyCutoffMs: Number(process.env.LINE_REPLY_CUTOFF_MS ?? 45_000),
+    emergencyAnswerText: process.env.EMERGENCY_ANSWER_TEXT ?? "申し訳ございません。ただいま回答を取得できませんでした。お急ぎの場合は店舗へ直接お問い合わせいただくか、時間をおいてもう一度お試しください。"
   });
 }
 

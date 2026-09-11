@@ -105,6 +105,14 @@ export class JobQueue {
       .run(text, now, jobId);
   }
 
+  saveFallbackAnswer(jobId: number, text: string, providerError: string): void {
+    const now = new Date().toISOString();
+    this.database.prepare(`UPDATE jobs
+      SET answer_text = ?, last_error = ?, updated_at = ?
+      WHERE id = ? AND state = 'processing'`)
+      .run(text, `Provider failed; emergency answer used: ${providerError}`, now, jobId);
+  }
+
   beginSend(jobId: number, mode: "reply" | "push"): string | undefined {
     const begin = this.database.transaction(() => {
       const row = this.database.prepare("SELECT push_retry_key FROM jobs WHERE id = ? AND state = 'processing'")
@@ -121,10 +129,12 @@ export class JobQueue {
     return begin.immediate();
   }
 
-  markSucceeded(jobId: number): void {
+  markSucceeded(jobId: number, preserveError = false): void {
     const now = new Date().toISOString();
-    this.database.prepare(`UPDATE jobs SET state = 'succeeded', sent_at = ?, updated_at = ?, last_error = NULL
-      WHERE id = ?`).run(now, now, jobId);
+    this.database.prepare(`UPDATE jobs
+      SET state = 'succeeded', sent_at = ?, updated_at = ?,
+          last_error = CASE WHEN ? THEN last_error ELSE NULL END
+      WHERE id = ?`).run(now, now, preserveError ? 1 : 0, jobId);
   }
 
   markUnknown(jobId: number, error: string): void {
