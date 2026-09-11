@@ -4,6 +4,40 @@
 
 > 状態: 2026-09-11の方針決定により保留。PoCは`REQUIREMENTS_v0.5.md`のVPS構成へ戻し、本案は採用しない。VPS候補と費用は`VPS_COST_COMPARISON.md`を参照する。
 
+## 月10人・1人5往復の場合の費用試算
+
+月10人、1人5回の質問と回答を月50回答として計算する。この試算はOpen Notebookを外し、Workers、Queues、Durable Objects、D1、Vectorize、任意のR2でRAGを実装する案を対象とする。
+
+| 費目 | Workers Free | Workers Paid | 月50回答での見込み |
+|---|---:|---:|---:|
+| Workers | 無料枠 | 最低$5/月 | 無料枠またはPaid基本料内 |
+| Queues | 10,000 operations/日 | 1,000,000 operations/月を含む | 約150 operationsで追加0円 |
+| Durable Objects | 100,000 requests/日等 | 1,000,000 requests/月等を含む | 追加0円 |
+| D1 | 5,000,000 rows read/日、100,000 rows write/日、5GB | 大幅な月間枠を含む | 追加0円 |
+| Vectorize | 30,000,000 queried dimensions/月、5,000,000 stored dimensions | 50,000,000 queried、10,000,000 storedを含む | 小規模FAQなら追加0円 |
+| R2 | 10GB、所定の操作無料枠 | 同じ無料枠を利用可能 | 原資料10GB以内なら追加0円 |
+| AI | Workers AIまたは外部Provider | 同左 | モデルにより約10〜130円/月相当 |
+
+Workers FreeだけならCloudflare基盤費は0円で開始できる。ただしFreeプランは一部の日次上限を超えると追加課金ではなく処理失敗になる。Queueの保持期間もFreeは24時間である。クライアント向け常時運用ではWorkers Paidの最低料金$5/月を予算化する。
+
+1 USD = 150円で比較すると、通常月は次を目安とする。
+
+- Freeでの技術PoC: Cloudflare基盤0円 + AI約10〜130円
+- Paidでの本番相当: Cloudflare約750〜850円 + AI約10〜130円
+- 月1回の複数モデル回帰テストを含む予算: 合計1,500円程度を上限目安
+
+この費用差だけでは採用を決めない。Cloudflareネイティブ案ではOpen NotebookのKnowledge UI、検索、回答APIを使えないため、Knowledge投入、Revision管理、RAG、評価用の共通回答経路を独自実装する必要がある。月額はVPSより約1,000円安くなる一方、PoCの実装量と検証範囲は大きく増える。
+
+料金根拠:
+
+- [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/)
+- [Queues pricing](https://developers.cloudflare.com/queues/platform/pricing/)
+- [Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/)
+- [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/)
+- [Vectorize pricing](https://developers.cloudflare.com/vectorize/platform/pricing/)
+- [R2 pricing](https://developers.cloudflare.com/r2/pricing/)
+- [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/)
+
 ## 結論
 
 CloudflareをLINE Botの常時稼働基盤にすることは可能。ただし、VPS用Docker ComposeをWorkersへ移す方式ではない。推奨案はOpen Notebook/SurrealDB/ローカルSQLiteを本番構成から外し、Cloudflare Workers、Durable Objects、D1、Vectorize、AI Gatewayで同じ業務目的を再構成する方式とする。
