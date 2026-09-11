@@ -41,7 +41,9 @@ services:
       SURREAL_PASSWORD: ${SURREAL_PASSWORD:?Run scripts/local-poc.ps1 init first}
       SURREAL_NAMESPACE: open_notebook
       SURREAL_DATABASE: open_notebook
-      CORS_ORIGINS: http://localhost:18502
+      CORS_ORIGINS: http://localhost:18502,http://127.0.0.1:18502
+      API_URL: http://127.0.0.1:15055
+      INTERNAL_API_URL: http://127.0.0.1:5055
       OPEN_NOTEBOOK_WORKER_MAX_TASKS: "2"
     volumes:
       - local-poc-notebook:/app/data

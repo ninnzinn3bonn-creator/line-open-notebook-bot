@@ -6,22 +6,24 @@ $uiUrl = "http://127.0.0.1:18502"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $outputPath = Join-Path $repoRoot "openapi/openapi.json"
 
-$deadline = (Get-Date).AddMinutes(5)
-do {
-    try {
-        $health = Invoke-RestMethod -Uri $healthUrl -TimeoutSec 5
-        break
-    } catch {
-        if ((Get-Date) -ge $deadline) {
-            throw "Open Notebook health checkが5分以内に成功しませんでした: $healthUrl"
+function Wait-WebResponse([string]$Url, [int]$TimeoutSec = 15) {
+    $deadline = (Get-Date).AddMinutes(5)
+    do {
+        try {
+            return Invoke-WebRequest -Uri $Url -TimeoutSec $TimeoutSec -UseBasicParsing
+        } catch {
+            if ((Get-Date) -ge $deadline) {
+                throw "5分以内にHTTP接続できませんでした: $Url"
+            }
+            Start-Sleep -Seconds 5
         }
-        Start-Sleep -Seconds 5
-    }
-} while ($true)
+    } while ($true)
+}
 
-$ui = Invoke-WebRequest -Uri $uiUrl -TimeoutSec 15 -UseBasicParsing
-$docs = Invoke-WebRequest -Uri $docsUrl -TimeoutSec 15 -UseBasicParsing
-$openApi = Invoke-WebRequest -Uri $openApiUrl -TimeoutSec 30 -UseBasicParsing
+$health = Wait-WebResponse -Url $healthUrl -TimeoutSec 5
+$ui = Wait-WebResponse -Url $uiUrl
+$docs = Wait-WebResponse -Url $docsUrl
+$openApi = Wait-WebResponse -Url $openApiUrl -TimeoutSec 30
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $outputPath) | Out-Null
 [System.IO.File]::WriteAllText($outputPath, $openApi.Content, [System.Text.UTF8Encoding]::new($false))
 $digest = (Get-FileHash -Algorithm SHA256 -Path $outputPath).Hash.ToLowerInvariant()
