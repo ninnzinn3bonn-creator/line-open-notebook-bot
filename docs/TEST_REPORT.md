@@ -13,7 +13,7 @@
 | Provider Timeout | PASS | 設定した期限超過を失敗として検出 |
 | Bridge Health | PASS | `GET /health`がstatus=ok |
 | Mock回答 | PASS | 日本語質問への決定的Mock応答を確認 |
-| Evaluation Runner骨格 | PASS | sample v001、2件を読込 |
+| Evaluation Runner | PASS | Bridge内部APIへ逐次質問し、必須事実、禁止事実、Source IDを自動判定。生成結果はGit対象外へ保存 |
 | Docker Compose構文 | PASS | `docker compose config --quiet` |
 | ConoHa production Compose | PASS | 非秘密の検証値でproduction overrideを含めて構文確認 |
 | Docker Desktop導入 | PASS | 4.90.0をインストール |
@@ -36,6 +36,10 @@
 | Bridge緊急回答 | PASS (UNIT) | Providerの有限再試行終了後に設定文面をSQLiteへ保存し、通常のReply/Push状態で1回送信。原因を`last_error`へ保持 |
 | 店舗口調の単純連結 | FAIL | 挨拶の後ろに業務語を含む口調指示を貼ると、その業務語を質問と誤認し、唯一の営業時間Sourceから「平日」等を捏造した |
 | Bridge回答方針分離 | PASS (UNIT) | `storefront-ja-v001`。挨拶はRAGを迂回し、顧客発話をタグで分離、業務例を除外、Source IDを本文からmetadataへ移動 |
+| OpenNotebookProvider | PASS | 稼働版OpenAPIの`POST /api/search/ask/simple`に準拠。Strategy・Answer・FinalのModel record IDを明示してBridge内部APIから実回答 |
+| 合成FAQ回帰Source | PASS | 架空店舗FAQ 20件を1 Sourceとして登録。`source:k3knm5n86jgduhp4b9d9`、処理status=`completed`、`embedded=true` |
+| Groq 120B全段・20問回帰 | 19/20 | 有料枠でStrategy・Answer・FinalをGroq `openai/gpt-oss-120b`に固定。平均7.44秒、p95 11.42秒、最大14.87秒、429なし。Wi-Fi回答は事実一致したがSource IDが返らずFAIL |
+| Source citation安定性 | FAIL | 同じSourceに基づく正答でもOpen Notebook最終回答がSource IDを省く場合がある。本文内citationだけを根拠判定に使う構造では不十分 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |

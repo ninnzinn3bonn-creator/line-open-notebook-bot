@@ -7,16 +7,30 @@ import { HttpLineClient } from "./line/client.js";
 import { MockAnswerProvider } from "./providers/mock-answer-provider.js";
 import { TimeoutAnswerProvider } from "./providers/timeout-answer-provider.js";
 import { AnswerPolicyProvider } from "./providers/answer-policy-provider.js";
+import { OpenNotebookProvider } from "./providers/open-notebook-provider.js";
 
 const port = Number(process.env.BRIDGE_PORT ?? 3001);
 const providerName = process.env.ANSWER_PROVIDER ?? "mock";
-if (providerName !== "mock") {
-  throw new Error(`ANSWER_PROVIDER=${providerName} is not implemented yet`);
-}
+const required = (name: string): string => {
+  const value = process.env[name]?.trim();
+  if (!value) throw new Error(`${name} is required when ANSWER_PROVIDER=open-notebook`);
+  return value;
+};
+
+const rawProvider = providerName === "mock"
+  ? new MockAnswerProvider(Number(process.env.MOCK_ANSWER_DELAY_MS ?? 10))
+  : providerName === "open-notebook"
+    ? new OpenNotebookProvider({
+        baseUrl: required("OPEN_NOTEBOOK_BASE_URL"),
+        strategyModelId: required("OPEN_NOTEBOOK_STRATEGY_MODEL_ID"),
+        answerModelId: required("OPEN_NOTEBOOK_ANSWER_MODEL_ID"),
+        finalAnswerModelId: required("OPEN_NOTEBOOK_FINAL_MODEL_ID")
+      })
+    : (() => { throw new Error(`Unsupported ANSWER_PROVIDER=${providerName}`); })();
 
 const provider = new AnswerPolicyProvider(
   new TimeoutAnswerProvider(
-    new MockAnswerProvider(Number(process.env.MOCK_ANSWER_DELAY_MS ?? 10)),
+    rawProvider,
     Number(process.env.AI_TIMEOUT_MS ?? 30_000)
   )
 );

@@ -1584,7 +1584,7 @@ Cost/150
 [ ] Regression Runner完成
 [ ] Model Comparison Report作成
 [ ] Bridge Mock Test成功
-[ ] OpenNotebookProvider成功
+[x] OpenNotebookProvider成功（ローカル合成FAQ・Bridge内部API）
 [ ] LINE E2E成功
 [ ] 同時3件成功
 [ ] Duplicate防止成功

@@ -1,0 +1,26 @@
+{
+  "revision": "synthetic-store-v001",
+  "timezone": "Asia/Tokyo",
+  "cases": [
+    {"id":"qa-01","category":"営業時間","question":"お店は何時に閉まりますか？","expectedFacts":["17:00"],"forbiddenFacts":["18:00","平日"],"shouldAnswer":true,"severity":"critical"},
+    {"id":"qa-02","category":"休業日","question":"年始のお休みを教えてください。","expectedFacts":["1月1日","1月3日"],"forbiddenFacts":["12月31日"],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-03","category":"所在地","question":"住所はどちらですか？","expectedFacts":["架空市みどり町1-2-3"],"forbiddenFacts":[],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-04","category":"アクセス","question":"駅から歩いてどれくらい？","expectedFacts":["みどり駅","東口","4分"],"forbiddenFacts":["西口"],"shouldAnswer":true,"severity":"normal"},
+    {"id":"qa-05","category":"駐車場","question":"車を停める場所はありますか？","expectedFacts":["3台"],"forbiddenFacts":["有料"],"shouldAnswer":true,"severity":"normal"},
+    {"id":"qa-06","category":"支払い","question":"クレジットカードとQR決済は使えますか？","expectedFacts":["Visa","Mastercard","QR","決済","対応しておりません"],"forbiddenFacts":[],"shouldAnswer":true,"severity":"critical"},
+    {"id":"qa-07","category":"取り置き","question":"本をキープしてもらえる期間は？","expectedFacts":["3日間"],"forbiddenFacts":["7日間"],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-08","category":"キャンセル","question":"取り置きを取り消すと料金がかかりますか？","expectedFacts":["前日","17","料金はかかりません"],"forbiddenFacts":["キャンセル料がかかります","費用が発生する可能性"],"shouldAnswer":true,"severity":"critical"},
+    {"id":"qa-09","category":"電話番号","question":"問い合わせ先の番号を教えて。","expectedFacts":["000-0000-0000"],"forbiddenFacts":[],"shouldAnswer":true,"severity":"critical"},
+    {"id":"qa-10","category":"電話受付","question":"16時半に電話してもつながりますか？","expectedFacts":["10","16"],"forbiddenFacts":["17:00まで電話"],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-11","category":"配送","question":"国外にも発送してもらえますか？","expectedFacts":["国外","発送","おりません","国内"],"forbiddenFacts":["海外配送に対応"],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-12","category":"送料","question":"配送代と無料になる条件は？","expectedFacts":["550円","5,000円以上","無料"],"forbiddenFacts":["無料条件はありません"],"shouldAnswer":true,"severity":"critical"},
+    {"id":"qa-13","category":"返品","question":"買った商品を返せる条件を教えて。","expectedFacts":["未使用","7日以内","レシート"],"forbiddenFacts":["30日以内"],"shouldAnswer":true,"severity":"critical"},
+    {"id":"qa-14","category":"ギフト包装","question":"プレゼント用の包装はいくら？","expectedFacts":["110円"],"forbiddenFacts":["無料"],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-15","category":"ペット","question":"犬を連れて入れますか？","expectedFacts":["補助犬","できません"],"forbiddenFacts":["ペット同伴可能"],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-16","category":"バリアフリー","question":"車椅子でもトイレを利用できますか？","expectedFacts":["段差","なく","車椅子","トイレ"],"forbiddenFacts":[],"shouldAnswer":true,"severity":"normal"},
+    {"id":"qa-17","category":"Wi-Fi","question":"店内の無料無線LANを使いたいです。","expectedFacts":["無料","無線LAN","利用いただけません"],"forbiddenFacts":["無料Wi-Fiを利用できます"],"shouldAnswer":true,"severity":"normal"},
+    {"id":"qa-18","category":"設備","question":"お客さん用のお手洗いはどの階ですか？","expectedFacts":["1階"],"forbiddenFacts":["2階"],"shouldAnswer":true,"severity":"normal"},
+    {"id":"qa-19","category":"領収書","question":"昨日の買い物の領収書をもう一度出せますか？","expectedFacts":["再発行","できません"],"forbiddenFacts":["再発行できます"],"shouldAnswer":true,"severity":"important"},
+    {"id":"qa-20","category":"ポイント","question":"ポイントの貯まり方と使い方は？","expectedFacts":["税込100円","1ポイント","1円"],"forbiddenFacts":["200円ごと","ほとんどすべての商品","現金への交換","他店での使用"],"shouldAnswer":true,"severity":"important"}
+  ]
+}

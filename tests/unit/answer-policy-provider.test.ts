@@ -50,5 +50,9 @@ describe("answer policy helpers", () => {
       text: "回答です。",
       sources: [{ id: "source:abc123" }]
     });
+    expect(extractSourceCitations("回答です［source:def456］")).toEqual({
+      text: "回答です",
+      sources: [{ id: "source:def456" }]
+    });
   });
 });

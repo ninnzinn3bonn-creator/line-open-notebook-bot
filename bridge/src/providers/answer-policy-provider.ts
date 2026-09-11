@@ -3,7 +3,7 @@ import type { AnswerInput, AnswerProvider, AnswerResult, SourceReference } from 
 export const ANSWER_POLICY_REVISION = "storefront-ja-v001";
 
 const GREETING_PATTERN = /^(?:こんにちは|こんにちわ|こんばんは|おはよう(?:ございます)?|もしもし)[\s!！。．?？]*$/u;
-const SOURCE_CITATION_PATTERN = /[【\[]\s*\*{0,2}(source:[a-z0-9]+)\*{0,2}\s*[】\]]/giu;
+const SOURCE_CITATION_PATTERN = /[【\[［]\s*\*{0,2}(source:[a-z0-9]+)\*{0,2}\s*[】\]］]/giu;
 
 export class AnswerPolicyProvider implements AnswerProvider {
   constructor(private readonly inner: AnswerProvider) {}
