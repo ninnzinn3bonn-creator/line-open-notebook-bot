@@ -1,4 +1,5 @@
 .env
+.env.local-poc
 *.db
 *.db-shm
 *.db-wal
@@ -14,4 +15,3 @@ evaluation/results/*
 evaluation/baselines/*.json
 logs/
 openapi/openapi.json
-

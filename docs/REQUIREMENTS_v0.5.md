@@ -1771,3 +1771,21 @@ Notebookは主に担当者が資料を整理・更新するための単位とす
 - [Open Notebook APIモデル](https://github.com/lfnovo/open-notebook/blob/main/api/models.py)
 - [Open Notebook Ask実装](https://github.com/lfnovo/open-notebook/blob/main/open_notebook/graphs/ask.py)
 - [Open Notebook検索ガイド](https://github.com/lfnovo/open-notebook/blob/main/docs/3-USER-GUIDE/search.md)
+
+# 59. VPS契約前のローカル隔離検証ゲート
+
+ConoHa VPSへ展開する前に、開発PC上でVPS相当の隔離Docker Compose環境を構築する。Composeプロジェクト、network、volume、認証情報を通常開発環境から分離し、公開ポートは`127.0.0.1`だけにbindする。Open NotebookとSurrealDBには4GB VPSを意識したメモリ上限を設定する。
+
+この検証はVPS上のUbuntuそのものを完全再現するものではない。Linux container、サービス間通信、永続volume、HTTP API、外部Provider接続という移植上重要な境界を先に検証する。
+
+VPS構築へ進む条件は以下とする。
+
+1. 固定版Open NotebookとSurrealDBが起動し、UI、`/health`、`/docs`、`/openapi.json`へ到達できる。
+2. 実OpenAPIを保存し、SHA-256とコンテナイメージDigestを記録する。
+3. 外部Language ModelとEmbedding ModelのConnection Testが成功する。
+4. 承認済み少数FAQのSource処理とEmbeddingが完了する。
+5. UIから代表質問への回答が成功し、根拠、モデル、応答時間を確認できる。
+6. 実OpenAPIに基づくOpenNotebookProviderを実装し、Bridgeから同じ回答経路を呼び出せる。
+7. コンテナ再起動後も設定とKnowledgeが保持され、再回答できる。
+
+このゲート合格後にConoHa VPS 4GBへ同じ固定版と設定を展開する。30〜50問の正式モデル比較、LINE E2E、障害・復旧試験、PoC最終判定は引き続きVPSを含む後続工程で実施する。

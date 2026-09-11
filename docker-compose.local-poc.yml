@@ -1,0 +1,63 @@
+name: line-open-notebook-local-poc
+
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v2
+    command:
+      - start
+      - --log
+      - info
+      - --user
+      - ${SURREAL_USER:-root}
+      - --pass
+      - ${SURREAL_PASSWORD:?Run scripts/local-poc.ps1 init first}
+      - rocksdb:/mydata/mydatabase.db
+    user: root
+    ports:
+      - "127.0.0.1:18000:8000"
+    volumes:
+      - local-poc-surreal:/mydata
+    environment:
+      SURREAL_EXPERIMENTAL_GRAPHQL: "true"
+    mem_limit: 768m
+    cpus: 1.0
+    healthcheck:
+      test: ["CMD", "/surreal", "isready", "--conn", "http://127.0.0.1:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  open-notebook:
+    image: lfnovo/open_notebook:${OPEN_NOTEBOOK_VERSION:-1.14.0}
+    ports:
+      - "127.0.0.1:18502:8502"
+      - "127.0.0.1:15055:5055"
+    environment:
+      OPEN_NOTEBOOK_ENCRYPTION_KEY: ${OPEN_NOTEBOOK_ENCRYPTION_KEY:?Run scripts/local-poc.ps1 init first}
+      SURREAL_URL: ws://surrealdb:8000/rpc
+      SURREAL_USER: ${SURREAL_USER:-root}
+      SURREAL_PASSWORD: ${SURREAL_PASSWORD:?Run scripts/local-poc.ps1 init first}
+      SURREAL_NAMESPACE: open_notebook
+      SURREAL_DATABASE: open_notebook
+      CORS_ORIGINS: http://localhost:18502
+      OPEN_NOTEBOOK_WORKER_MAX_TASKS: "2"
+    volumes:
+      - local-poc-notebook:/app/data
+    mem_limit: 2560m
+    cpus: 3.0
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5055/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    depends_on:
+      surrealdb:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  local-poc-surreal:
+  local-poc-notebook:

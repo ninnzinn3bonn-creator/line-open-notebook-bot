@@ -17,7 +17,10 @@
 | Docker Compose構文 | PASS | `docker compose config --quiet` |
 | ConoHa production Compose | PASS | 非秘密の検証値でproduction overrideを含めて構文確認 |
 | Docker Desktop導入 | PASS | 4.90.0をインストール |
-| WSL 2導入 | BLOCKED | 管理者確認がキャンセルされ、Windows機能を有効化できていない |
+| ローカル隔離Compose定義 | PASS | 専用project/volume、loopback port、約3.3GBのサービス上限。Compose設定展開成功 |
+| ローカル検証スクリプト | PASS | PowerShell構文解析成功。認証情報生成、起動、smoke、停止、専用volume初期化を実装 |
+| WSL 2導入 | PASS (REBOOT PENDING) | `wsl --install --no-distribution`終了コード0、WSL 2.7.13・kernel 6.18.33.2を確認。Windows再起動待ち |
+| ローカルOpen Notebook実起動 | NOT RUN | Windows再起動後にDocker Engineを起動して実施 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |
