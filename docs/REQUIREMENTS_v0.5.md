@@ -136,6 +136,8 @@ Windows
 
 クライアント所有VPSを利用する。
 
+PoCの実行・提出基盤はConoHa VPSの4GBプラン（4 vCPU、100GB SSD、GPUなし）を採用する。Ubuntu LTSとDocker Composeを使用し、Open Notebook、SurrealDB、LINE Bridge、SQLite、Reverse Proxyを同一VPS上で稼働させる。LLMとEmbeddingは外部APIを利用し、ローカル推論環境は搭載しない。
+
 ```text
 Ubuntu
 2〜4 vCPU
@@ -1655,7 +1657,7 @@ Regression Test
 
 # 51. 今回の提出範囲
 
-今回のミッションは第48章のPoC提出とする。第44章のクライアントVPS以降および第49章の本番納品条件は次段階とする。
+今回のミッションは第48章のPoC提出とする。PoC自体はConoHa VPS 4GB上で実行する。クライアント固有アカウントへの最終移管および第49章の本番納品条件は次段階とする。
 
 実Q&A、30〜50問以上のGolden Dataset評価、2モデル以上の比較、人間評価、Baseline、Regression Runner、比較レポート、LINE E2Eと障害・復旧試験をPoCに含める。Mock成功を実AI評価やLINE E2Eの代替にしない。
 

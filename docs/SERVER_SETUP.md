@@ -1,0 +1,77 @@
+# ConoHa VPS 4GB PoCセットアップ
+
+## 採用構成
+
+- ConoHa VPS 4GB、4 vCPU、100GB SSD、GPUなし
+- Ubuntu LTS
+- Docker Engine + Docker Compose plugin
+- CaddyによるHTTPS
+- Open Notebook 1.14.0、SurrealDB v2、LINE Bridge、SQLite
+- Gemini/Groq等の外部AI API
+
+## VPS作成時
+
+1. ConoHa側で4GB VPSとUbuntu LTSを選択する。
+2. SSH公開鍵認証を設定する。
+3. セキュリティグループではSSH、TCP 80、TCP/UDP 443だけを許可する。
+4. DNSのAレコードをVPSのIPv4アドレスへ向ける。
+5. SurrealDB 8000、Open Notebook 5055/8502、Bridge 3001は外部公開しない。
+
+## 初期化
+
+リポジトリをVPSへ取得した後に実行する。
+
+```bash
+sudo bash scripts/bootstrap-conoha.sh
+sudo chown -R "$USER":"$USER" /opt/line-open-notebook-bot
+sudo usermod -aG docker "$USER"
+```
+
+一度SSHを切断して再接続し、`docker version`と`docker compose version`を確認する。
+
+## 秘密情報
+
+```bash
+cd /opt/line-open-notebook-bot
+cp .env.example .env
+chmod 600 .env
+```
+
+次を実値へ変更する。
+
+- `PUBLIC_HOST`
+- `OPEN_NOTEBOOK_ENCRYPTION_KEY`
+- `OPEN_NOTEBOOK_PASSWORD`
+- `SURREAL_PASSWORD`
+- `LINE_CHANNEL_SECRET`
+- `LINE_CHANNEL_ACCESS_TOKEN`
+
+暗号鍵とパスワードは長いランダム値にする。AI ProviderキーはOpen Notebook UIから登録する。
+
+## 起動
+
+```bash
+bash scripts/deploy-production.sh
+```
+
+確認項目:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.production.yml ps
+curl -fsS "https://${PUBLIC_HOST}/bridge-health"
+curl -fsS "https://${PUBLIC_HOST}/api/config"
+```
+
+ブラウザで`https://${PUBLIC_HOST}`を開き、Open Notebookのパスワード認証を確認する。Caddyが証明書を取得するため、起動前にDNSがVPSを指しており、80/443番ポートへ到達できる必要がある。
+
+## LINE接続前の順序
+
+1. Open Notebookの`/health`、`/docs`、`/openapi.json`を確認する。
+2. `openapi/openapi.json`を保存し、採用イメージのDigestを記録する。
+3. AI ProviderとEmbeddingを登録し、Connection Testを成功させる。
+4. 少数の承認済みQ&Aを投入し、処理・Embedding・検索を確認する。
+5. 実OpenAPIに合わせて`OpenNotebookProvider`を実装・検証する。
+6. `ANSWER_PROVIDER=open-notebook`へ変更する。
+7. LINE DevelopersのWebhook URLを`https://${PUBLIC_HOST}/webhooks/line`へ設定する。
+
+MockのままLINE本番アカウントへ接続しない。

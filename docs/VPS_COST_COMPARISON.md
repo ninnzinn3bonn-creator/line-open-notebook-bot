@@ -4,7 +4,7 @@
 
 ## 結論
 
-PoCはGPUなし、4 vCPU前後、メモリ4GBの国内Linux VPSから開始する。第一候補はKAGOYA CLOUD VPSの4GBプランとする。
+2026-09-11の方針決定により、PoCはConoHa VPSの4GBプランを採用する。GPUなし、4 vCPU、メモリ4GB、100GB SSDの国内Linux VPSとして、Ubuntu LTSとDocker Composeで構築する。
 
 Open Notebookの公式ドキュメントでは最小メモリが4GBとされている。今回の構成はOpen Notebook、SurrealDB、LINE Bridge、Reverse Proxyを同居させ、LLMとEmbeddingの推論には外部APIを使う。そのため4GBでPoCを開始できる見込みはあるが、余裕のある構成ではない。2GBまたは3GBへの減額は行わない。
 
@@ -15,8 +15,8 @@ Open Notebookの公式ドキュメントでは最小メモリが4GBとされて�
 | 事業者 | 4GBプランの目安 | CPU | SSD | 契約上の特徴 | PoC判断 |
 |---|---:|---:|---:|---|---|
 | WebARENA Indigo | 月額上限1,630円 | 4 vCPU | 80GB | 時間課金、最低利用期間なし | 最安。80GBで足りる短期検証候補 |
-| KAGOYA CLOUD VPS | 月額上限1,760円 | 4コア | 600GB NVMe | 日額63円、年額19,404円 | 第一候補。月130円差で容量に余裕がある |
-| ConoHa VPS | おおむね月2,200円前後 | 4コア | 100GB | 長期一括割引あり | 管理画面や既存契約を優先する場合の候補 |
+| KAGOYA CLOUD VPS | 月額上限1,760円 | 4コア | 600GB NVMe | 日額63円、年額19,404円 | 比較対象 |
+| ConoHa VPS | おおむね月2,200円前後 | 4コア | 100GB | 長期一括割引あり | **採用** |
 | XServer VPS | 1ヶ月2,640円、12ヶ月2,200円、36ヶ月2,035円 | 4コア | 150GB NVMe | 契約期間分を一括前払い | 長期契約なら候補。PoCの短期利用では割高 |
 | さくらのVPS（石狩） | 月払い3,520円、年払い月額換算3,227円 | 4コア | 200GB | 4GBプランはSLA対象 | 安定性やSLA優先時の候補。今回の費用条件には高い |
 
@@ -35,14 +35,14 @@ Open Notebookの公式ドキュメントでは最小メモリが4GBとされて�
 
 | 費目 | 月額目安 | 備考 |
 |---|---:|---|
-| VPS | 1,760円 | KAGOYA 4GBを月額上限まで稼働 |
+| VPS | 約2,200円 | ConoHa 4GBを継続稼働 |
 | HTTPS証明書 | 0円 | Let's Encryptを使用 |
 | Reverse Proxy | 0円 | CaddyまたはNginxをDockerで稼働 |
 | Open Notebook / SurrealDB / Bridge | 0円 | OSSを自己運用 |
 | AI API | 従量 | GeminiまたはGroq。質問数、検索文量、選択モデルで変動 |
 | ドメイン | 別途 | 既存ドメインのサブドメインを使えば追加費用なし |
 
-VPS本体だけなら月1,760円、最低限の外部バックアップを含めても月2,000円前後を初期予算とする。AI API料金とLINE Messaging API料金は利用量に応じて別管理する。
+VPS本体は月約2,200円、最低限の外部バックアップと通常のAI API利用を含めて月2,500〜3,000円を初期予算とする。LINE Messaging API料金は利用プランに応じて別管理する。
 
 ## 月10人・1人5往復の場合のAI API概算
 
@@ -96,15 +96,17 @@ KAGOYAの8GBは月額上限3,410円、年払いは月額換算3,135円である�
 
 ## 採用方針
 
-1. PoC用にKAGOYA CLOUD VPS 4GBを月額・日額課金で1台用意する。
+1. PoC用にConoHa VPS 4GBを1台用意する。
 2. Ubuntu LTSとDocker Composeで現行要件どおり構築する。
 3. Open Notebook、SurrealDB、Bridge、Reverse Proxyを起動してアイドル時とKnowledge投入時のメモリを測る。
 4. 4GBで成立すればそのまま提出候補とする。
 5. 成立しない場合だけ8GBへ変更し、測定結果を提出資料へ記載する。
 
-クライアントがすでにConoHaアカウントを所有している場合は、月数百円の差より所有権移管と請求管理の簡単さを優先し、ConoHa 4GBを採用してよい。
+ConoHa VPS 4GBを採用し、月数百円の価格差よりPoCの安定動作、管理画面、所有権移管と請求管理の簡単さを優先する。
 
 ## 2GB構成の条件付き検証
+
+> 採用しない。以下は4GB採用前に検討した履歴として残す。
 
 Open Notebook公式の最小要件は4GBであり、2GBは正式な推奨構成にはしない。ただし、月50回答程度、外部LLM・外部Embedding API利用、同時処理1件という今回のPoC条件では、KAGOYA CLOUD VPS 2GB（月額上限770円）で起動・低負荷運用できる可能性がある。
 

@@ -1,0 +1,20 @@
+FROM node:24.13.0-bookworm-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY tsconfig.json ./
+COPY bridge ./bridge
+COPY evaluation ./evaluation
+RUN npm run build && npm prune --omit=dev
+
+FROM node:24.13.0-bookworm-slim AS runtime
+ENV NODE_ENV=production
+WORKDIR /app
+RUN useradd --system --uid 10001 --create-home bridge
+COPY --from=build --chown=bridge:bridge /app/node_modules ./node_modules
+COPY --from=build --chown=bridge:bridge /app/dist ./dist
+COPY --from=build --chown=bridge:bridge /app/bridge/src/db/schema.sql ./bridge/src/db/schema.sql
+RUN mkdir -p /app/data && chown bridge:bridge /app/data
+USER bridge
+EXPOSE 3001
+CMD ["node", "dist/bridge/src/server.js"]

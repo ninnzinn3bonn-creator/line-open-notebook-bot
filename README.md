@@ -4,7 +4,7 @@ Open NotebookをKnowledge/RAG/回答生成基盤として使うLINE問い合わ�
 
 ## 現在の状態
 
-初回セットアップ中です。Open Notebook 1.14.0をDocker Composeで起動する構成、BridgeのMock回答とHealth endpoint、SQLite schema、評価Dataset schemaとRunner骨格を用意しています。Docker Desktopは導入済みですが、WSL 2の有効化とWindows再起動が必要です。実AI接続と回答精度評価は、Open Notebook起動後に実APIを確認し、認証情報と実Q&Aを登録してから行います。
+PoC基盤はConoHa VPS 4GBに決定しました。Open Notebook 1.14.0とSurrealDBの固定版Compose、BridgeのMock回答、LINE署名検証、SQLite永続キュー、重複防止、順序制御、Timeoutと再起動復旧、Caddy HTTPS、ConoHa用セットアップスクリプトを用意しています。実AI接続と回答精度評価は、VPS上でOpen Notebookを起動して実OpenAPIを保存し、認証情報と承認済み実Q&Aを登録してから行います。
 
 ## ローカル起動
 
@@ -13,6 +13,8 @@ Open NotebookをKnowledge/RAG/回答生成基盤として使うLINE問い合わ�
 3. `docker compose pull`、`docker compose up -d`を実行する。
 4. `http://localhost:5055/health`と`http://localhost:8502`を確認する。
 5. `npm install`、`npm test`、`npm run dev`を実行する。
+
+ConoHa VPSへの構築は[docs/SERVER_SETUP.md](docs/SERVER_SETUP.md)に従う。
 
 Open Notebookの認証情報はUIのManage → Modelsから登録し、Connection Testが成功したモデルだけを評価対象にします。APIキーをGitへ保存しません。
 

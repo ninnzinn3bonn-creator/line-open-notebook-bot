@@ -17,6 +17,12 @@ services:
       - ./surreal_data:/mydata
     environment:
       SURREAL_EXPERIMENTAL_GRAPHQL: "true"
+    healthcheck:
+      test: ["CMD", "/surreal", "isready", "--conn", "http://127.0.0.1:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
     restart: unless-stopped
 
   open-notebook:
@@ -35,7 +41,13 @@ services:
       OPEN_NOTEBOOK_WORKER_MAX_TASKS: "2"
     volumes:
       - ./notebook_data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5055/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
     depends_on:
-      - surrealdb
+      surrealdb:
+        condition: service_healthy
     restart: unless-stopped
-
