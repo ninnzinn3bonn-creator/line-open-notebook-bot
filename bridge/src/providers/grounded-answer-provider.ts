@@ -3,7 +3,7 @@ import type { AnswerInput, AnswerProvider, AnswerResult, SourceReference } from 
 import { isDeterministicGreeting } from "./answer-policy-provider.js";
 
 export const GROUNDING_REVISION = "vector-gate-v001";
-const STORE_CONTEXT_PATTERN = /(?:店|店舗|商品|在庫|取扱|取り扱|予約|注文|配送|送料|返品|返金|交換|支払|決済|営業時間|休業|住所|場所|アクセス|駐車|電話|スタッフ|店員|接客|苦情|要望|ポイント|領収書|包装|トイレ|wi-?fi|ペット|車椅子)/iu;
+const STORE_CONTEXT_PATTERN = /(?:店|店舗|商品|本|書籍|おすすめ|在庫|取扱|取り扱|予約|注文|配送|送料|返品|返金|交換|支払|決済|営業時間|休業|住所|場所|アクセス|駐車|電話|スタッフ|店員|接客|苦情|要望|ポイント|領収書|包装|トイレ|wi-?fi|ペット|車椅子)/iu;
 
 type SearchItem = {
   id?: string;

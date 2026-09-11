@@ -68,6 +68,14 @@ describe("GroundedAnswerProvider", () => {
     database.close();
   });
 
+  it("reviews an ungrounded product recommendation instead of rejecting it", async () => {
+    const { database, provider, inner } = setup(0.5);
+    const result = await provider.answer({ message: "今いちばんおすすめの本は何ですか？", userId: "u3" });
+    expect(inner.answer).not.toHaveBeenCalled();
+    expect(result.route).toBe("needs_review");
+    database.close();
+  });
+
   it("lets deterministic greetings bypass vector search", async () => {
     const inner: AnswerProvider = { answer: vi.fn(async () => ({ text: "こんにちは。", latencyMs: 1, route: "deterministic" as const })) };
     const { database, provider, fetch } = setup(0, inner);

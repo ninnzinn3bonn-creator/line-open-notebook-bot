@@ -57,3 +57,6 @@
 | LINE E2E | NOT RUN | 後続Track |
 
 PASSはここに記載した範囲だけを表す。PoC完了条件の合格を意味しない。
+
+| 合成FAQ 40問回帰 v002 | PASS (COMBINED) | 全体実行38/40。2件は同義表現の採点False Negativeで、定義修正後の対象再試験2/2。最終確認40/40。平均5.42秒、p95 10.38秒、429なし。詳細はREGRESSION_REPORT_v002.md |
+| LINE E2E事前診断 | READY / CREDENTIALS PENDING | Token、登録Webhook、有効状態、署名付き空Webhookを確認する npm run line:preflight を追加。現時点ではChannel secret、access token、公開HTTPS URLが未設定 |
