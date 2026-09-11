@@ -6,6 +6,7 @@ import { startWorkers } from "./jobs/worker.js";
 import { HttpLineClient } from "./line/client.js";
 import { MockAnswerProvider } from "./providers/mock-answer-provider.js";
 import { TimeoutAnswerProvider } from "./providers/timeout-answer-provider.js";
+import { AnswerPolicyProvider } from "./providers/answer-policy-provider.js";
 
 const port = Number(process.env.BRIDGE_PORT ?? 3001);
 const providerName = process.env.ANSWER_PROVIDER ?? "mock";
@@ -13,9 +14,11 @@ if (providerName !== "mock") {
   throw new Error(`ANSWER_PROVIDER=${providerName} is not implemented yet`);
 }
 
-const provider = new TimeoutAnswerProvider(
-  new MockAnswerProvider(Number(process.env.MOCK_ANSWER_DELAY_MS ?? 10)),
-  Number(process.env.AI_TIMEOUT_MS ?? 30_000)
+const provider = new AnswerPolicyProvider(
+  new TimeoutAnswerProvider(
+    new MockAnswerProvider(Number(process.env.MOCK_ANSWER_DELAY_MS ?? 10)),
+    Number(process.env.AI_TIMEOUT_MS ?? 30_000)
+  )
 );
 const database = initializeDatabase(process.env.SQLITE_PATH ?? "./data/queue.db");
 const queue = new JobQueue(database);

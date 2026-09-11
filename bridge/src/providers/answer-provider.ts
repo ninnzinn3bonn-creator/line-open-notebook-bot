@@ -13,6 +13,7 @@ export type AnswerResult = {
   text: string;
   sources?: SourceReference[];
   latencyMs: number;
+  promptRevision?: string;
   usage?: { inputTokens?: number; outputTokens?: number };
   model?: { provider?: string; model?: string };
 };
@@ -20,4 +21,3 @@ export type AnswerResult = {
 export interface AnswerProvider {
   answer(input: AnswerInput): Promise<AnswerResult>;
 }
-
