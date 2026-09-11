@@ -39,10 +39,11 @@ export class GroundedAnswerProvider implements AnswerProvider {
   async answer(input: AnswerInput): Promise<AnswerResult> {
     if (isDeterministicGreeting(input.message)) return this.inner.answer(input);
     const startedAt = performance.now();
+    const searchQuery = input.searchMessage ?? input.message;
     const response = await this.fetchImpl(this.endpoint, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ query: input.message, type: "vector", limit: 5, search_sources: true, search_notes: false, minimum_score: 0 })
+      body: JSON.stringify({ query: searchQuery, type: "vector", limit: 5, search_sources: true, search_notes: false, minimum_score: 0 })
     });
     if (!response.ok) throw new Error(`Open Notebook Search failed (${response.status}): ${(await response.text()).slice(0, 500)}`);
     const payload = await response.json() as SearchResponse;
@@ -59,7 +60,7 @@ export class GroundedAnswerProvider implements AnswerProvider {
       return { text: this.config.reviewText, latencyMs: Math.round(performance.now() - startedAt), route: "needs_review", grounding };
     }
 
-    const answer = await this.inner.answer(input);
+    const answer = await this.inner.answer({ ...input, message: searchQuery });
     return { ...answer, route: "in_scope", grounding, sources: mergeSearchSources(answer.sources, results) };
   }
 }

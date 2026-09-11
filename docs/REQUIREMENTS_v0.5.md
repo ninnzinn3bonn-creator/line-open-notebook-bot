@@ -1864,6 +1864,8 @@ Grounding Gateと対象内外判定の閾値は実測前に固定しない。営
 
 Open NotebookのAsk画面は単発質問として扱い、LINE上の会話文脈はBridgeが管理する。PoCの初期設定は、同一LINE user IDについて時間による自動失効を設けず、最大3ラリー（顧客3発話とBot3回答）を参照範囲とする。明示的なリセット発話、有人対応への移行、保持上限到達後の新規話題判定によって新しいconversationを開始する。ラリー数はConfiguration化し、時間によるTTLは無効を表す設定を持つ。
 
+初期実装Revisionは`three-rallies-v001`とする。独立した質問には過去turnを付加せず、「それ」「同じ」「その場合」等の文脈依存表現がある場合だけ直前の顧客質問を検索用質問へ補う。ローカル実APIでは営業時間に続く「土曜日も同じ？」をscore 0.795で営業時間Sourceへ接続できた。
+
 Bridgeは`conversations`と`conversation_turns`をSQLiteへ保存し、ユーザー間の履歴を混在させない。各turnにはconversation ID、role、原文、作成時刻、回答経路、参照Source、model・embedding・knowledge・query mode・prompt revision、token usageを関連付ける。LINE webhookの重複受信では同じturnを二重登録しない。
 
 過去の会話全文をそのまま検索語へ連結しない。現在の質問が「それはいくらですか」「その場合は？」等の文脈依存表現を含む場合、Bridgeは現在の発話と直近turnから検索用の独立した質問を作る。Open Notebookの検索APIにはこの検索用質問を送り、口調指示、過去のBot回答、無関係な旧話題を検索語へ混ぜない。生成回答には現在の発話、必要な直近文脈、Grounding Gateを通過した根拠だけを渡す。

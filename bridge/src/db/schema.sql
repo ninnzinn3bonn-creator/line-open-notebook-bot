@@ -56,3 +56,32 @@ CREATE TABLE IF NOT EXISTS review_decision_history (
   decision_note TEXT,
   decided_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS conversations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'active' CHECK (state IN ('active','completed','reset','human_handoff')),
+  rally_count INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  closed_at TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS conversations_one_active_user_idx
+  ON conversations(user_id) WHERE state = 'active';
+
+CREATE TABLE IF NOT EXISTS conversation_turns (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  conversation_id INTEGER NOT NULL REFERENCES conversations(id),
+  role TEXT NOT NULL CHECK (role IN ('user','assistant')),
+  text TEXT NOT NULL,
+  route TEXT,
+  sources_json TEXT,
+  model_json TEXT,
+  grounding_json TEXT,
+  prompt_revision TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS conversation_turns_conversation_idx
+  ON conversation_turns(conversation_id, id);

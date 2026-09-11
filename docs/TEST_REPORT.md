@@ -47,6 +47,8 @@
 | Grounding込み20問回帰 | PASS (FACTS) | 20問すべて`in_scope`で事実上正答し検索Sourceを保持。初回自動判定18/20は「17時/17:00」「国外/海外」の表記差で、選択肢グループ対応後の該当2問再試験は2/2成功 |
 | 店舗関連・低score保護 | PASS | 「店員の対応について相談したい」は0.669で`needs_review`。店舗関連語がある低score質問も対象外へ即時拒否せず確認キューへ送る実装と単体試験を追加 |
 | 確認キュー管理API | PASS | Bearer認証付き一覧・確定APIを実装。`in_scope`、`out_of_scope`、`knowledge_missing`と担当者メモを保存し、decision historyへ監査記録を追加 |
+| 3ラリー会話保持 | PASS | `three-rallies-v001`。user IDごとに会話を分離し、顧客・Bot turnと回答metadataをSQLiteへ保存。3ラリー到達と明示リセットで新conversationへ切替 |
+| 文脈依存質問・実API | PASS | 「営業時間は何時まで？」に続く「土曜日も同じ？」を直前話題付き検索へ変換。score 0.795、土曜日も9:00〜17:00と回答し、同一conversationへ2ラリー保存 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |

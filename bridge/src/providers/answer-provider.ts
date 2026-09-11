@@ -7,7 +7,12 @@ export type SourceReference = {
 export type AnswerInput = {
   message: string;
   userId: string;
+  conversationId?: number;
+  context?: ConversationTurn[];
+  searchMessage?: string;
 };
+
+export type ConversationTurn = { role: "user" | "assistant"; text: string };
 
 export type AnswerResult = {
   text: string;

@@ -10,12 +10,15 @@ import { AnswerPolicyProvider } from "./providers/answer-policy-provider.js";
 import { OpenNotebookProvider } from "./providers/open-notebook-provider.js";
 import { GroundedAnswerProvider } from "./providers/grounded-answer-provider.js";
 import { ReviewQueue } from "./db/review-queue.js";
+import { ConversationStore } from "./db/conversation-store.js";
+import { ConversationMemoryProvider } from "./providers/conversation-memory-provider.js";
 
 const port = Number(process.env.BRIDGE_PORT ?? 3001);
 const providerName = process.env.ANSWER_PROVIDER ?? "mock";
 const database = initializeDatabase(process.env.SQLITE_PATH ?? "./data/queue.db");
 const queue = new JobQueue(database);
 const reviewQueue = new ReviewQueue(database);
+const conversationStore = new ConversationStore(database, Number(process.env.CONVERSATION_MAX_RALLIES ?? 3));
 const required = (name: string): string => {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`${name} is required when ANSWER_PROVIDER=open-notebook`);
@@ -44,7 +47,10 @@ const routedProvider = providerName === "open-notebook"
       reviewText: process.env.REVIEW_PENDING_ANSWER_TEXT ?? "お問い合わせありがとうございます。正確にご案内するため、内容を確認いたします。"
     })
   : policyProvider;
-const provider = new TimeoutAnswerProvider(routedProvider, Number(process.env.AI_TIMEOUT_MS ?? 30_000));
+const provider = new ConversationMemoryProvider(
+  new TimeoutAnswerProvider(routedProvider, Number(process.env.AI_TIMEOUT_MS ?? 30_000)),
+  conversationStore
+);
 const accessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN ?? "";
 if (accessToken) {
   startWorkers(queue, provider, new HttpLineClient(accessToken, Number(process.env.LINE_SEND_TIMEOUT_MS ?? 10_000)), {
