@@ -72,6 +72,25 @@ curl -fsS "https://${PUBLIC_HOST}/api/config"
 4. 少数の承認済みQ&Aを投入し、処理・Embedding・検索を確認する。
 5. 実OpenAPIに合わせて`OpenNotebookProvider`を実装・検証する。
 6. `ANSWER_PROVIDER=open-notebook`へ変更する。
+
+## 確認待ちキュー
+
+`INTERNAL_ADMIN_TOKEN`に十分長いランダム値を設定する。確認待ちの顧客発話を含むため、`/internal/*`を公開リバースプロキシの経路へ含めない。管理操作はVPS内部または認証済み管理経路から行う。
+
+```http
+GET /internal/reviews?status=pending&limit=50
+Authorization: Bearer <INTERNAL_ADMIN_TOKEN>
+```
+
+```http
+POST /internal/reviews/{id}/decision
+Authorization: Bearer <INTERNAL_ADMIN_TOKEN>
+Content-Type: application/json
+
+{"decision":"knowledge_missing","note":"FAQ追加候補"}
+```
+
+`decision`は`in_scope`、`out_of_scope`、`knowledge_missing`のいずれかとする。同じreviewは1回だけ確定でき、再確定要求はHTTP 409になる。確定内容は`review_decision_history`にも追記する。
 7. LINE DevelopersのWebhook URLを`https://${PUBLIC_HOST}/webhooks/line`へ設定する。
 
 MockのままLINE本番アカウントへ接続しない。

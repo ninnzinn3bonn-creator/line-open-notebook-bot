@@ -46,6 +46,7 @@
 | 全体検索Source衛生 | FAIL→RESOLVED | 旧営業時間Sourceの年末年始表現が20件版回答へ混入。旧合成Sourceを削除後、20件版Sourceだけを根拠に9:00〜17:00を回答 |
 | Grounding込み20問回帰 | PASS (FACTS) | 20問すべて`in_scope`で事実上正答し検索Sourceを保持。初回自動判定18/20は「17時/17:00」「国外/海外」の表記差で、選択肢グループ対応後の該当2問再試験は2/2成功 |
 | 店舗関連・低score保護 | PASS | 「店員の対応について相談したい」は0.669で`needs_review`。店舗関連語がある低score質問も対象外へ即時拒否せず確認キューへ送る実装と単体試験を追加 |
+| 確認キュー管理API | PASS | Bearer認証付き一覧・確定APIを実装。`in_scope`、`out_of_scope`、`knowledge_missing`と担当者メモを保存し、decision historyへ監査記録を追加 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |

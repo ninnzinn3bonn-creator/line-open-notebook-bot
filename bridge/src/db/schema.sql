@@ -40,9 +40,19 @@ CREATE TABLE IF NOT EXISTS review_requests (
   top_score REAL,
   search_results_json TEXT NOT NULL,
   decision TEXT CHECK (decision IS NULL OR decision IN ('in_scope','out_of_scope','knowledge_missing')),
+  decision_note TEXT,
+  resolved_at TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','resolved')),
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS review_requests_status_idx ON review_requests(status, created_at);
+
+CREATE TABLE IF NOT EXISTS review_decision_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  review_request_id INTEGER NOT NULL REFERENCES review_requests(id),
+  decision TEXT NOT NULL CHECK (decision IN ('in_scope','out_of_scope','knowledge_missing')),
+  decision_note TEXT,
+  decided_at TEXT NOT NULL
+);

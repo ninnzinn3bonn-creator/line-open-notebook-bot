@@ -58,7 +58,13 @@ if (accessToken) {
   });
 }
 
-const server = createApp({ provider, queue, lineChannelSecret: process.env.LINE_CHANNEL_SECRET }).listen(port, "0.0.0.0", () => {
+const server = createApp({
+  provider,
+  queue,
+  reviewQueue,
+  lineChannelSecret: process.env.LINE_CHANNEL_SECRET,
+  internalAdminToken: process.env.INTERNAL_ADMIN_TOKEN
+}).listen(port, "0.0.0.0", () => {
   console.log(`Bridge listening at http://0.0.0.0:${port}`);
 });
 
