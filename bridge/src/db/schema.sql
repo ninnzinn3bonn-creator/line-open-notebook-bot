@@ -30,3 +30,19 @@ CREATE TABLE IF NOT EXISTS jobs (
 
 CREATE INDEX IF NOT EXISTS jobs_claim_idx ON jobs(state, available_at, lease_until, id);
 CREATE INDEX IF NOT EXISTS jobs_user_order_idx ON jobs(user_id, id);
+
+CREATE TABLE IF NOT EXISTS review_requests (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  dedupe_key TEXT NOT NULL UNIQUE,
+  user_id TEXT NOT NULL,
+  message_text TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  top_score REAL,
+  search_results_json TEXT NOT NULL,
+  decision TEXT CHECK (decision IS NULL OR decision IN ('in_scope','out_of_scope','knowledge_missing')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','resolved')),
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS review_requests_status_idx ON review_requests(status, created_at);

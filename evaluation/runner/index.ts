@@ -6,6 +6,7 @@ type EvaluationCase = {
   category: string;
   question: string;
   expectedFacts: string[];
+  expectedAnyOf?: string[][];
   forbiddenFacts: string[];
   shouldAnswer: boolean;
   severity: "normal" | "important" | "critical";
@@ -18,6 +19,8 @@ type BridgeAnswer = {
   promptRevision?: string;
   model?: { provider?: string; model?: string };
   usage?: { inputTokens?: number; outputTokens?: number };
+  route?: string;
+  grounding?: { topScore?: number; revision?: string };
 };
 
 const datasetPath = process.argv[2] ?? "evaluation/datasets/synthetic-store-v001.json";
@@ -41,14 +44,17 @@ for (const testCase of dataset.cases) {
     const answer = await response.json() as BridgeAnswer;
     const normalized = normalize(answer.text);
     const missingFacts = testCase.expectedFacts.filter((fact) => !normalized.includes(normalize(fact)));
+    const missingAnyOf = (testCase.expectedAnyOf ?? []).filter((alternatives) =>
+      !alternatives.some((fact) => normalized.includes(normalize(fact))));
     const forbiddenFacts = testCase.forbiddenFacts.filter((fact) => normalized.includes(normalize(fact)));
     const missingSource = testCase.shouldAnswer && !(answer.sources?.some((source) => source.id));
-    const passed = missingFacts.length === 0 && forbiddenFacts.length === 0 && !missingSource;
+    const passed = missingFacts.length === 0 && missingAnyOf.length === 0 && forbiddenFacts.length === 0 && !missingSource;
     results.push({
       id: testCase.id,
       category: testCase.category,
       passed,
       missingFacts,
+      missingAnyOf,
       forbiddenFacts,
       missingSource,
       answer: answer.text,
@@ -56,7 +62,9 @@ for (const testCase of dataset.cases) {
       latencyMs: answer.latencyMs ?? Math.round(performance.now() - startedAt),
       promptRevision: answer.promptRevision,
       model: answer.model,
-      usage: answer.usage
+      usage: answer.usage,
+      route: answer.route,
+      grounding: answer.grounding
     });
     console.error(`[${results.length}/${dataset.cases.length}] ${testCase.id} ${passed ? "PASS" : "FAIL"}`);
   } catch (error) {

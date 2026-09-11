@@ -40,6 +40,12 @@
 | 合成FAQ回帰Source | PASS | 架空店舗FAQ 20件を1 Sourceとして登録。`source:k3knm5n86jgduhp4b9d9`、処理status=`completed`、`embedded=true` |
 | Groq 120B全段・20問回帰 | 19/20 | 有料枠でStrategy・Answer・FinalをGroq `openai/gpt-oss-120b`に固定。平均7.44秒、p95 11.42秒、最大14.87秒、429なし。Wi-Fi回答は事実一致したがSource IDが返らずFAIL |
 | Source citation安定性 | FAIL | 同じSourceに基づく正答でもOpen Notebook最終回答がSource IDを省く場合がある。本文内citationだけを根拠判定に使う構造では不十分 |
+| Bridge Grounding Gate | PASS | `vector-gate-v001`。検索APIの生質問scoreで0.70以上を回答、0.60以下を対象外、その間を確認待ちへ分類。検索結果のSourceを回答metadataへ保持 |
+| 三段階判定・実API | PASS | 営業時間0.804=`in_scope`、Pythonコード要求0.561=`out_of_scope`、未登録おすすめ商品0.644=`needs_review`を確認 |
+| 人手確認キュー | PASS (UNIT) | 境界質問をSQLiteへ保存し、同一user ID・同一質問の再試行では重複登録しない |
+| 全体検索Source衛生 | FAIL→RESOLVED | 旧営業時間Sourceの年末年始表現が20件版回答へ混入。旧合成Sourceを削除後、20件版Sourceだけを根拠に9:00〜17:00を回答 |
+| Grounding込み20問回帰 | PASS (FACTS) | 20問すべて`in_scope`で事実上正答し検索Sourceを保持。初回自動判定18/20は「17時/17:00」「国外/海外」の表記差で、選択肢グループ対応後の該当2問再試験は2/2成功 |
+| 店舗関連・低score保護 | PASS | 「店員の対応について相談したい」は0.669で`needs_review`。店舗関連語がある低score質問も対象外へ即時拒否せず確認キューへ送る実装と単体試験を追加 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |

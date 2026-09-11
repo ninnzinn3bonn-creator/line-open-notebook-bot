@@ -8,9 +8,14 @@ import { MockAnswerProvider } from "./providers/mock-answer-provider.js";
 import { TimeoutAnswerProvider } from "./providers/timeout-answer-provider.js";
 import { AnswerPolicyProvider } from "./providers/answer-policy-provider.js";
 import { OpenNotebookProvider } from "./providers/open-notebook-provider.js";
+import { GroundedAnswerProvider } from "./providers/grounded-answer-provider.js";
+import { ReviewQueue } from "./db/review-queue.js";
 
 const port = Number(process.env.BRIDGE_PORT ?? 3001);
 const providerName = process.env.ANSWER_PROVIDER ?? "mock";
+const database = initializeDatabase(process.env.SQLITE_PATH ?? "./data/queue.db");
+const queue = new JobQueue(database);
+const reviewQueue = new ReviewQueue(database);
 const required = (name: string): string => {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`${name} is required when ANSWER_PROVIDER=open-notebook`);
@@ -28,14 +33,18 @@ const rawProvider = providerName === "mock"
       })
     : (() => { throw new Error(`Unsupported ANSWER_PROVIDER=${providerName}`); })();
 
-const provider = new AnswerPolicyProvider(
-  new TimeoutAnswerProvider(
-    rawProvider,
-    Number(process.env.AI_TIMEOUT_MS ?? 30_000)
-  )
-);
-const database = initializeDatabase(process.env.SQLITE_PATH ?? "./data/queue.db");
-const queue = new JobQueue(database);
+const policyProvider = new AnswerPolicyProvider(rawProvider);
+const routedProvider = providerName === "open-notebook"
+  ? new GroundedAnswerProvider(policyProvider, {
+      baseUrl: required("OPEN_NOTEBOOK_BASE_URL"),
+      answerThreshold: Number(process.env.GROUNDING_ANSWER_THRESHOLD ?? 0.70),
+      outOfScopeThreshold: Number(process.env.GROUNDING_OUT_OF_SCOPE_THRESHOLD ?? 0.60),
+      reviewQueue,
+      outOfScopeText: process.env.OUT_OF_SCOPE_ANSWER_TEXT ?? "恐れ入りますが、こちらでは店舗に関するお問い合わせを承っています。店舗について確認したいことがございましたら、内容をお聞かせください。",
+      reviewText: process.env.REVIEW_PENDING_ANSWER_TEXT ?? "お問い合わせありがとうございます。正確にご案内するため、内容を確認いたします。"
+    })
+  : policyProvider;
+const provider = new TimeoutAnswerProvider(routedProvider, Number(process.env.AI_TIMEOUT_MS ?? 30_000));
 const accessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN ?? "";
 if (accessToken) {
   startWorkers(queue, provider, new HttpLineClient(accessToken, Number(process.env.LINE_SEND_TIMEOUT_MS ?? 10_000)), {

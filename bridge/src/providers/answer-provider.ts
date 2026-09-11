@@ -16,6 +16,8 @@ export type AnswerResult = {
   promptRevision?: string;
   usage?: { inputTokens?: number; outputTokens?: number };
   model?: { provider?: string; model?: string };
+  route?: "in_scope" | "out_of_scope" | "needs_review" | "deterministic";
+  grounding?: { topScore?: number; revision?: string };
 };
 
 export interface AnswerProvider {

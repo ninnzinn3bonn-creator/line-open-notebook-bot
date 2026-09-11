@@ -10,11 +10,12 @@ export class AnswerPolicyProvider implements AnswerProvider {
 
   async answer(input: AnswerInput): Promise<AnswerResult> {
     const startedAt = performance.now();
-    if (GREETING_PATTERN.test(input.message.trim())) {
+    if (isDeterministicGreeting(input.message)) {
       return {
         text: "こんにちは。お問い合わせありがとうございます。ご用件をお聞かせください。",
         latencyMs: Math.round(performance.now() - startedAt),
         promptRevision: ANSWER_POLICY_REVISION,
+        route: "deterministic",
         model: { provider: "bridge", model: "deterministic-greeting-v1" }
       };
     }
@@ -28,6 +29,10 @@ export class AnswerPolicyProvider implements AnswerProvider {
       promptRevision: ANSWER_POLICY_REVISION
     };
   }
+}
+
+export function isDeterministicGreeting(message: string): boolean {
+  return GREETING_PATTERN.test(message.trim());
 }
 
 export function buildControlledQuestion(customerMessage: string): string {

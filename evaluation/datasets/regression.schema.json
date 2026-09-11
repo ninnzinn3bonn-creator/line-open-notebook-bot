@@ -18,6 +18,14 @@
           "category": { "type": "string", "minLength": 1 },
           "question": { "type": "string", "minLength": 1 },
           "expectedFacts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "expectedAnyOf": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          },
           "forbiddenFacts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
           "shouldAnswer": { "type": "boolean" },
           "severity": { "enum": ["normal", "important", "critical"] },
@@ -27,4 +35,3 @@
     }
   }
 }
-
