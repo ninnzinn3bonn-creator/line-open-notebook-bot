@@ -1823,7 +1823,7 @@ Bridgeは以下を行う。
 
 PoCの生成モデルはGroq `openai/gpt-oss-120b`に固定する。Embeddingは生成モデルとは分離し、動作確認済みの`gemini-embedding-001`を使用する。評価結果にはGroq側のモデルIDだけでなく、Open Notebookへ登録したModel record ID、Embedding record ID、Knowledge revision、Query mode、Prompt revisionを記録する。
 
-ただし、Open NotebookのStrategy・Answer・FinalをすべてGroq 120Bに設定した連続試験では、Groq無料枠のTPM制限による失敗を確認済みである。したがって「120B固定」はモデル選定の決定を意味し、無料枠で全生成段を常時安定稼働できることまでは意味しない。PoCでは各段の実測Token usage、429発生率、応答時間を記録し、必要ならGroqの利用枠を上げる。モデルを無断で別モデルへ切り替えて回答内容を変えない。
+Open NotebookのStrategy・Answer・FinalをすべてGroq 120Bに設定した無料枠での連続試験では、TPM制限による失敗を確認済みである。その後、有料枠を採用したため、PoCでは120Bを全生成段の候補として実測する。各段のToken usage、429発生率、応答時間を記録し、有料枠でも契約上のRate limitを超える場合は呼出し回数、投入コンテキスト、並行数を調整する。モデルを無断で別モデルへ切り替えて回答内容を変えない。
 
 Bridgeの回答経路は次の順序で実装する。
 
