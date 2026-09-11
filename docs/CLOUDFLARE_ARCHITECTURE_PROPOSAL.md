@@ -2,6 +2,8 @@
 
 作成日: 2026-09-11
 
+> 状態: 2026-09-11の方針決定により保留。PoCは`REQUIREMENTS_v0.5.md`のVPS構成へ戻し、本案は採用しない。VPS候補と費用は`VPS_COST_COMPARISON.md`を参照する。
+
 ## 結論
 
 CloudflareをLINE Botの常時稼働基盤にすることは可能。ただし、VPS用Docker ComposeをWorkersへ移す方式ではない。推奨案はOpen Notebook/SurrealDB/ローカルSQLiteを本番構成から外し、Cloudflare Workers、Durable Objects、D1、Vectorize、AI Gatewayで同じ業務目的を再構成する方式とする。
