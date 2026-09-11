@@ -25,7 +25,12 @@
 | ローカルOpen Notebook API | PASS | `/health`、`/docs`、`/openapi.json`がHTTP 200。OpenAPI SHA-256 `14b99996837840df7713a4253cc8c7dfe65cfef5fa4cb2ef218fb0a750c22f39` |
 | コンテナImage固定 | PASS | Open Notebook digest `sha256:e53f90d6153fcf4a64604d9a0c12cb0428a32cfb8dbcbb72e81ab12c013ee330`、SurrealDB digest `sha256:d653f6c8a89e81f865ee31cd2f587c50f50ace922175e04150b1e385d2f86011` |
 | 4GB相当リソース初期確認 | PASS | 上限Open Notebook 2.5GiB、SurrealDB 768MiB。起動直後実使用約311MiB＋66MiB |
-| ローカル外部AI API | BLOCKED | Open NotebookのProvider登録0件。Google/Groq等のCredentialが必要 |
+| ローカル外部AI API | PASS | Groq `openai/gpt-oss-120b`・`openai/gpt-oss-20b`、Google `gemini-3.6-flash`・`gemini-embedding-001`のModel Test成功 |
+| 廃止モデル検出 | PASS | 登録時の`gemini-2.5-flash`はGoogle APIが新規利用不可を返したため不採用。再同期した`gemini-3.6-flash`へ変更 |
+| 合成Knowledge投入・Embedding | PASS | ローカル専用FAQ 1件を処理し、Google Embeddingで1 chunk作成・`embedded=true`を確認 |
+| Open Notebook Ask | PASS | Gemini全段、Gemini固定＋Groq 120B最終、Gemini固定＋Groq 20B最終の3構成が17:00とSource IDを回答 |
+| Ask初回Latency参考値 | INFO | Gemini全段37.0秒、Groq 120B最終22.3秒、Groq 20B最終45.5秒。単発測定のためモデル採否には使わない |
+| ローカル再起動永続性 | PASS | Open Notebook再起動後も2 Provider、既定モデル、埋込みSourceを保持し、Groq 120B最終で11.6秒の再回答に成功 |
 | ConoHa VPS作成 | NOT RUN | 4GBプラン採用決定。契約・接続情報が必要 |
 | Open Notebook image取得 | NOT RUN | ConoHa VPS作成後に実施 |
 | Open Notebook Health/OpenAPI | NOT RUN | ConoHa VPS上で固定版を起動後に実施 |
