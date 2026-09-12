@@ -33,7 +33,12 @@
           "setupMessages": { "type": "array", "items": { "type": "string", "minLength": 1 } },
           "expectedRoutes": { "type": "array", "minItems": 1, "items": { "enum": ["in_scope", "out_of_scope", "needs_review", "deterministic"] } },
           "sourceRequired": { "type": "boolean" },
-          "maxSentences": { "type": "integer", "minimum": 1 }
+          "maxSentences": { "type": "integer", "minimum": 1 },
+          "expectedHandoffReasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "enum": ["customer_requested_human", "insufficient_knowledge", "high_risk_or_commitment", "repeated_failure", "technical_failure"] }
+          }
         }
       }
     }

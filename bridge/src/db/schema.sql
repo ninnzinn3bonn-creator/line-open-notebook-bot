@@ -85,3 +85,19 @@ CREATE TABLE IF NOT EXISTS conversation_turns (
 
 CREATE INDEX IF NOT EXISTS conversation_turns_conversation_idx
   ON conversation_turns(conversation_id, id);
+
+CREATE TABLE IF NOT EXISTS handoff_requests (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  dedupe_key TEXT NOT NULL UNIQUE,
+  user_id TEXT NOT NULL,
+  conversation_id INTEGER REFERENCES conversations(id),
+  message_text TEXT NOT NULL,
+  reason TEXT NOT NULL CHECK (reason IN ('customer_requested_human','insufficient_knowledge','high_risk_or_commitment','repeated_failure','technical_failure')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','resolved')),
+  resolution_note TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  resolved_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS handoff_requests_status_idx ON handoff_requests(status, created_at);

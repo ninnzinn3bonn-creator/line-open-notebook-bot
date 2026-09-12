@@ -12,6 +12,8 @@ import { GroundedAnswerProvider } from "./providers/grounded-answer-provider.js"
 import { ReviewQueue } from "./db/review-queue.js";
 import { ConversationStore } from "./db/conversation-store.js";
 import { ConversationMemoryProvider } from "./providers/conversation-memory-provider.js";
+import { HandoffQueue } from "./db/handoff-queue.js";
+import { HumanHandoffProvider } from "./providers/human-handoff-provider.js";
 
 const port = Number(process.env.BRIDGE_PORT ?? 3001);
 const providerName = process.env.ANSWER_PROVIDER ?? "mock";
@@ -19,6 +21,7 @@ const database = initializeDatabase(process.env.SQLITE_PATH ?? "./data/queue.db"
 const queue = new JobQueue(database);
 const reviewQueue = new ReviewQueue(database);
 const conversationStore = new ConversationStore(database, Number(process.env.CONVERSATION_MAX_RALLIES ?? 3));
+const handoffQueue = new HandoffQueue(database);
 const required = (name: string): string => {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`${name} is required when ANSWER_PROVIDER=open-notebook`);
@@ -48,7 +51,13 @@ const routedProvider = providerName === "open-notebook"
     })
   : policyProvider;
 const provider = new ConversationMemoryProvider(
-  new TimeoutAnswerProvider(routedProvider, Number(process.env.AI_TIMEOUT_MS ?? 30_000)),
+  new TimeoutAnswerProvider(new HumanHandoffProvider(routedProvider, {
+    queue: handoffQueue,
+    answerText: process.env.HUMAN_HANDOFF_ANSWER_TEXT ?? "お問い合わせありがとうございます。担当者による確認が必要な内容です。恐れ入りますが、店舗へ直接お問い合わせください。",
+    phone: process.env.HUMAN_HANDOFF_PHONE,
+    hours: process.env.HUMAN_HANDOFF_HOURS,
+    chatUrl: process.env.HUMAN_HANDOFF_CHAT_URL
+  }), Number(process.env.AI_TIMEOUT_MS ?? 30_000)),
   conversationStore
 );
 const accessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN ?? "";
@@ -68,6 +77,7 @@ const server = createApp({
   provider,
   queue,
   reviewQueue,
+  handoffQueue,
   lineChannelSecret: process.env.LINE_CHANNEL_SECRET,
   internalAdminToken: process.env.INTERNAL_ADMIN_TOKEN
 }).listen(port, "0.0.0.0", () => {

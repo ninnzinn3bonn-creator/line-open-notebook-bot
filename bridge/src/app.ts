@@ -5,6 +5,7 @@ import { extractTextEvents, type LineWebhookBody } from "./line/events.js";
 import { verifyLineSignature } from "./line/signature.js";
 import type { ReviewDecision, ReviewQueue } from "./db/review-queue.js";
 import { timingSafeEqual } from "node:crypto";
+import type { HandoffQueue } from "./db/handoff-queue.js";
 
 export type AppDependencies = {
   provider: AnswerProvider;
@@ -12,9 +13,10 @@ export type AppDependencies = {
   lineChannelSecret?: string;
   reviewQueue?: ReviewQueue;
   internalAdminToken?: string;
+  handoffQueue?: HandoffQueue;
 };
 
-export function createApp({ provider, queue, lineChannelSecret = "", reviewQueue, internalAdminToken = "" }: AppDependencies) {
+export function createApp({ provider, queue, lineChannelSecret = "", reviewQueue, handoffQueue, internalAdminToken = "" }: AppDependencies) {
   const app = express();
 
   app.post("/webhooks/line", express.raw({ type: "application/json", limit: "1mb" }), (request, response) => {
@@ -86,6 +88,34 @@ export function createApp({ provider, queue, lineChannelSecret = "", reviewQueue
       return;
     }
     response.json({ id, status: "resolved", decision });
+  });
+
+  app.get("/internal/handoffs", (request, response) => {
+    if (!handoffQueue || !authorized(request.header("authorization"), internalAdminToken)) {
+      response.sendStatus(handoffQueue ? 401 : 503);
+      return;
+    }
+    const status = request.query.status === "resolved" ? "resolved" : "pending";
+    const limit = Number(request.query.limit ?? 50);
+    response.json({ status, handoffs: handoffQueue.list(status, Number.isFinite(limit) ? limit : 50) });
+  });
+
+  app.post("/internal/handoffs/:id/resolve", (request, response) => {
+    if (!handoffQueue || !authorized(request.header("authorization"), internalAdminToken)) {
+      response.sendStatus(handoffQueue ? 401 : 503);
+      return;
+    }
+    const id = Number(request.params.id);
+    const note = typeof request.body?.note === "string" ? request.body.note : undefined;
+    if (!Number.isInteger(id) || id < 1) {
+      response.status(400).json({ error: "valid id is required" });
+      return;
+    }
+    if (!handoffQueue.resolve(id, note)) {
+      response.status(409).json({ error: "handoff is missing or already resolved" });
+      return;
+    }
+    response.json({ id, status: "resolved" });
   });
 
   return app;

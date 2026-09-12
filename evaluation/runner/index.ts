@@ -14,6 +14,7 @@ type EvaluationCase = {
   expectedRoutes?: string[];
   sourceRequired?: boolean;
   maxSentences?: number;
+  expectedHandoffReasons?: string[];
 };
 type EvaluationDataset = { revision: string; timezone: string; cases: EvaluationCase[] };
 type BridgeAnswer = {
@@ -25,6 +26,7 @@ type BridgeAnswer = {
   usage?: { inputTokens?: number; outputTokens?: number };
   route?: string;
   grounding?: { topScore?: number; revision?: string };
+  handoff?: { id?: number; reason?: string; revision?: string };
 };
 
 const datasetPath = process.argv[2] ?? "evaluation/datasets/synthetic-store-v001.json";
@@ -74,10 +76,12 @@ for (const testCase of dataset.cases) {
     const missingSource = sourceRequired && !(answer.sources?.some((source) => source.id));
     const unexpectedSource = !sourceRequired && Boolean(answer.sources?.some((source) => source.id));
     const unexpectedRoute = Boolean(testCase.expectedRoutes?.length && !testCase.expectedRoutes.includes(answer.route ?? ""));
+    const unexpectedHandoffReason = Boolean(testCase.expectedHandoffReasons?.length
+      && !testCase.expectedHandoffReasons.includes(answer.handoff?.reason ?? ""));
     const sentenceCount = countSentences(answer.text);
     const tooManySentences = testCase.maxSentences !== undefined && sentenceCount > testCase.maxSentences;
     const passed = missingFacts.length === 0 && missingAnyOf.length === 0 && forbiddenFacts.length === 0
-      && !missingSource && !unexpectedSource && !unexpectedRoute && !tooManySentences;
+      && !missingSource && !unexpectedSource && !unexpectedRoute && !unexpectedHandoffReason && !tooManySentences;
     results.push({
       id: testCase.id,
       category: testCase.category,
@@ -88,6 +92,7 @@ for (const testCase of dataset.cases) {
       missingSource,
       unexpectedSource,
       unexpectedRoute,
+      unexpectedHandoffReason,
       expectedRoutes: testCase.expectedRoutes,
       sentenceCount,
       tooManySentences,
@@ -98,7 +103,8 @@ for (const testCase of dataset.cases) {
       model: answer.model,
       usage: answer.usage,
       route: answer.route,
-      grounding: answer.grounding
+      grounding: answer.grounding,
+      handoff: answer.handoff
     });
     console.error(`[${results.length}/${dataset.cases.length}] ${testCase.id} ${passed ? "PASS" : "FAIL"}`);
   } catch (error) {

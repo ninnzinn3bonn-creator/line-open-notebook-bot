@@ -60,3 +60,6 @@ PASSはここに記載した範囲だけを表す。PoC完了条件の合格を�
 
 | 合成FAQ 40問回帰 v002 | PASS (COMBINED) | 全体実行38/40。2件は同義表現の採点False Negativeで、定義修正後の対象再試験2/2。最終確認40/40。平均5.42秒、p95 10.38秒、429なし。詳細はREGRESSION_REPORT_v002.md |
 | LINE E2E事前診断 | READY / CREDENTIALS PENDING | Token、登録Webhook、有効状態、署名付き空Webhookを確認する npm run line:preflight を追加。現時点ではChannel secret、access token、公開HTTPS URLが未設定 |
+| 有人移管ルーティング | PASS | `human-handoff-v001`。明示的な有人希望と予約・注文・取り置き・返金等の高リスク確定要求を検索前に`needs_review`へ送り、理由付きhandoff recordをSQLiteへ保存 |
+| 有人移管管理API | PASS | Bearer認証付き一覧・解決API、重複防止、会話の`human_handoff`終了、設定可能な案内文・電話・受付時間・チャットURLを実装 |
+| 有人移管決定経路 | PASS | 42問版へ有人希望と予約確定要求を追加。Mock Bridge実経路で2/2、Latency最大1ms |

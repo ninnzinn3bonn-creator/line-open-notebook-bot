@@ -91,6 +91,25 @@ Content-Type: application/json
 ```
 
 `decision`は`in_scope`、`out_of_scope`、`knowledge_missing`のいずれかとする。同じreviewは1回だけ確定でき、再確定要求はHTTP 409になる。確定内容は`review_decision_history`にも追記する。
+
+## 有人移管キュー
+
+明示的な有人希望と、予約確定・返金確定などAIが確定してはいけない要求は、Open Notebookを呼ぶ前に`handoff_requests`へ保存する。実際の転送機能が未接続の間は、設定済み連絡先への案内だけを返す。
+
+```http
+GET /internal/handoffs?status=pending&limit=50
+Authorization: Bearer <INTERNAL_ADMIN_TOKEN>
+```
+
+```http
+POST /internal/handoffs/{id}/resolve
+Authorization: Bearer <INTERNAL_ADMIN_TOKEN>
+Content-Type: application/json
+
+{"note":"電話対応済み"}
+```
+
+案内文と連絡先は`HUMAN_HANDOFF_ANSWER_TEXT`、`HUMAN_HANDOFF_PHONE`、`HUMAN_HANDOFF_HOURS`、`HUMAN_HANDOFF_CHAT_URL`で設定する。未設定の電話番号やURLは回答へ表示しない。
 7. LINE DevelopersのWebhook URLを`https://${PUBLIC_HOST}/webhooks/line`へ設定する。
 
 MockのままLINE本番アカウントへ接続しない。
