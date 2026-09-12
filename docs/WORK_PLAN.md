@@ -39,6 +39,10 @@
 4. VPS上で42問評価、LINE E2E、同時実行、障害復旧を再実施
 5. 構成、Revision、結果、費用、既知制約をPoC提出資料へ確定
 
+## Track 4A: Oracle Always Free代替検証
+
+OCI Ampere A1は主要コンテナのArm64 manifestを確認済み。実機を確保できた場合は、2 OCPU・8〜12GB RAMでBridgeのネイティブビルド、Compose起動、42問評価、LINE E2E、バックアップ復旧を先に実行する。全ゲート合格時だけPoC配置先をOCIへ変更し、ConoHaは容量不足・回収時の代替先として残す。詳細は`ORACLE_ALWAYS_FREE_FEASIBILITY.md`を参照する。
+
 ## 外部待ち
 
 - LINE Channel secret、Channel access token、公開HTTPS URL
