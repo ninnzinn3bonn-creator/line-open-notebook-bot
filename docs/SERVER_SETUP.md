@@ -113,3 +113,7 @@ Content-Type: application/json
 7. LINE DevelopersのWebhook URLを`https://${PUBLIC_HOST}/webhooks/line`へ設定する。
 
 MockのままLINE本番アカウントへ接続しない。
+
+## 納品時の所有権
+
+PoC用LINE公式アカウントとMessaging APIチャネルは開発・検証専用とする。Messaging APIチャネルは別プロバイダーへ移動できないため、本番ではクライアント名義のプロバイダーと公式アカウントで新しいチャネルを作成し、VPSのLINE認証情報とWebhook設定を切り替える。権限確認、事前診断、端末E2E、PoC認証情報の失効を含む詳細手順は[LINE_E2E_SETUP.md](LINE_E2E_SETUP.md#納品時のlineアカウント切替)に従う。

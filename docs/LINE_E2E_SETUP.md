@@ -62,3 +62,24 @@ npm run line:preflight
 8. Bridge再起動後に処理中ジョブが回収されること
 
 LINE APIがリクエストを受け付けた時刻と、端末へ表示された時刻は別に記録する。PoCレポートには成功件数、失敗件数、平均・中央値・p95、再試行回数を記載する。
+
+## 納品時のLINEアカウント切替
+
+PoCでは開発者が所有する検証専用のLINE公式アカウントとMessaging APIチャネルを使用する。本番納品では、クライアントをサービス提供者として扱い、クライアント自身が管理するLINEヤフーBusiness ID、LINE公式アカウント、LINE Developersプロバイダーを使用する。
+
+Messaging APIチャネルは作成後に別のプロバイダーへ移動できず、LINE公式アカウントとの連携も解除できない。このため、PoCチャネルやその認証情報を本番へ移管しない。クライアントが既存の適切なプロバイダーを持つ場合はそれを選択し、持たない場合はクライアント名義で新規作成してからMessaging APIを有効にする。
+
+切替手順:
+
+1. クライアント管理者がクライアント名義のプロバイダーとLINE公式アカウントを準備する。
+2. クライアント管理者がその公式アカウントでMessaging APIを有効にし、対象プロバイダーへ一度だけ連携する。
+3. クライアント管理者がChannel secretとChannel access tokenを発行し、Gitや納品資料を経由せず、VPSの秘密情報へ直接設定する。
+4. 本番VPSの`LINE_CHANNEL_SECRET`と`LINE_CHANNEL_ACCESS_TOKEN`を差し替え、Bridgeを再起動する。
+5. LINE Developersで本番Webhook URLを`https://<public-host>/webhooks/line`へ設定し、Webhookを有効化して検証を成功させる。
+6. Official Account Managerの応答メッセージとAI応答メッセージを停止し、Bridgeとの二重返信を防ぐ。
+7. `npm run line:preflight`を実行し、Bot情報、登録Webhook、有効状態、署名検証を確認する。
+8. クライアント端末で通常回答、対象外回答、有人案内、3ラリー文脈、Timeout時の緊急回答を再試験する。
+9. クライアント管理者へLINE Developersのプロバイダー権限とチャネル管理権限、Official Account Managerの管理権限があることを確認する。
+10. PoC用のChannel secretとaccess tokenを失効させ、PoC環境の`.env`と実行データを削除する。
+
+プロバイダー単位でLINE user IDが変わるため、PoCで取得したuser ID、会話履歴、ジョブ、有人移管記録を本番へ移さない。移行対象はBridge、Open Notebookの承認済みナレッジ、プロンプト設定、評価データセット、構成手順とし、本番認証情報と実利用データはクライアント環境で新しく生成する。
