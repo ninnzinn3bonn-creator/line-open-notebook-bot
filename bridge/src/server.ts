@@ -47,7 +47,7 @@ const routedProvider = providerName === "open-notebook"
       outOfScopeThreshold: Number(process.env.GROUNDING_OUT_OF_SCOPE_THRESHOLD ?? 0.60),
       reviewQueue,
       outOfScopeText: process.env.OUT_OF_SCOPE_ANSWER_TEXT ?? "恐れ入りますが、こちらでは店舗に関するお問い合わせを承っています。店舗について確認したいことがございましたら、内容をお聞かせください。",
-      reviewText: process.env.REVIEW_PENDING_ANSWER_TEXT ?? "お問い合わせありがとうございます。正確にご案内するため、内容を確認いたします。"
+      reviewText: process.env.REVIEW_PENDING_ANSWER_TEXT ?? "お問い合わせありがとうございます。恐れ入りますが、そちらの内容は現在このLINEではご案内できません。店舗に関するほかのご質問がございましたら、お尋ねください。"
     })
   : policyProvider;
 const provider = new ConversationMemoryProvider(
