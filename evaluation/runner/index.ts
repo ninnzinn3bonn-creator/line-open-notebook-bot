@@ -31,6 +31,9 @@ type BridgeAnswer = {
 
 const datasetPath = process.argv[2] ?? "evaluation/datasets/synthetic-store-v001.json";
 const bridgeUrl = (process.env.BRIDGE_BASE_URL ?? "http://127.0.0.1:3001").replace(/\/$/u, "");
+const internalAdminToken = process.env.INTERNAL_ADMIN_TOKEN?.trim() ?? "";
+if (!internalAdminToken) throw new Error("INTERNAL_ADMIN_TOKEN is required for evaluation");
+const bridgeHeaders = { "content-type": "application/json", authorization: `Bearer ${internalAdminToken}` };
 const dataset = JSON.parse(await readFile(datasetPath, "utf8")) as EvaluationDataset;
 const normalize = (text: string) => text.normalize("NFKC")
   .replace(/[‐‑‒–—―−ー]/gu, "-")
@@ -55,14 +58,14 @@ for (const testCase of dataset.cases) {
     for (const message of testCase.setupMessages ?? []) {
       const setupResponse = await fetch(`${bridgeUrl}/internal/answer`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: bridgeHeaders,
         body: JSON.stringify({ message, userId })
       });
       if (!setupResponse.ok) throw new Error(`Bridge setup returned ${setupResponse.status}: ${(await setupResponse.text()).slice(0, 300)}`);
     }
     const response = await fetch(`${bridgeUrl}/internal/answer`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: bridgeHeaders,
       body: JSON.stringify({ message: testCase.question, userId })
     });
     if (!response.ok) throw new Error(`Bridge returned ${response.status}: ${(await response.text()).slice(0, 300)}`);

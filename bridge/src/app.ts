@@ -44,10 +44,14 @@ export function createApp({ provider, queue, lineChannelSecret = "", reviewQueue
   app.use(express.json({ limit: "1mb" }));
 
   app.get("/health", (_request, response) => {
-    response.json({ status: "ok", answerProvider: process.env.ANSWER_PROVIDER ?? "mock" });
+    response.json({ status: "ok" });
   });
 
   app.post("/internal/answer", async (request, response, next) => {
+    if (!authorized(request.header("authorization"), internalAdminToken)) {
+      response.sendStatus(401);
+      return;
+    }
     try {
       const message = typeof request.body?.message === "string" ? request.body.message.trim() : "";
       const userId = typeof request.body?.userId === "string" ? request.body.userId.trim() : "";

@@ -11,6 +11,8 @@
 - 実店舗データの入力テンプレートと構造検証コマンド
 - PoC提出レポートの骨組み
 - OCI／VPS共通の再構築可能な構成
+- Tunnel tokenのsecret化、用途別Dockerネットワーク分離、内部回答APIのBearer認証
+- OCI・Cloudflare・LINE・管理者経路のセキュリティ設計レビュー
 
 ## 引き続き認証なしで進められる
 
@@ -19,12 +21,14 @@
 - MMP要件の初期値、合否表、PoCとの差分表の整備
 - バックアップ・復元・監視スクリプトのローカル検証
 - Tunnel停止、Provider障害、重複Webhookの追加自動試験
+- OCI Arm64で確認したコンテナimage digestの固定
 - TEST_REPORTとPoC提出レポートへの検証結果反映
 
 ## 外部認証・利用者操作が必要
 
 - OCI A1インスタンス作成、SSH鍵登録、実機接続
 - Cloudflare固定Tunnel、DNS、Access policy、Tunnel tokenの発行
+- Access未認証・許可外アカウントの拒否試験とOCI受信ポート検査
 - LINE Webhook URLの固定ホスト名への切替と実端末E2E
 - Groq／Geminiの本番用認証情報設定
 

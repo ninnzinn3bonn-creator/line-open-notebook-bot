@@ -1,5 +1,6 @@
 .env
 .env.local-poc
+secrets/
 *.db
 *.db-shm
 *.db-wal

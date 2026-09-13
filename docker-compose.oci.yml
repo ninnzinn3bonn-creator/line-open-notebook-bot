@@ -1,14 +1,21 @@
 services:
   surrealdb:
     ports: !reset []
+    networks:
+      - backend
     restart: always
 
   open-notebook:
     ports: !reset []
     environment:
       API_URL: https://${OPEN_NOTEBOOK_ADMIN_HOST:?Set OPEN_NOTEBOOK_ADMIN_HOST in .env}
+      CORS_ORIGINS: https://${OPEN_NOTEBOOK_ADMIN_HOST:?Set OPEN_NOTEBOOK_ADMIN_HOST in .env}
       OPEN_NOTEBOOK_PASSWORD: ${OPEN_NOTEBOOK_PASSWORD:?Set OPEN_NOTEBOOK_PASSWORD in .env}
       OPEN_NOTEBOOK_WORKER_MAX_TASKS: "1"
+    networks:
+      - backend
+      - admin-edge
+      - egress
     restart: always
 
   bridge:
@@ -19,6 +26,19 @@ services:
       BRIDGE_PORT: "3001"
       SQLITE_PATH: /app/data/queue.db
       ANSWER_PROVIDER: ${ANSWER_PROVIDER:-open-notebook}
+      OPEN_NOTEBOOK_STRATEGY_MODEL_ID: ${OPEN_NOTEBOOK_STRATEGY_MODEL_ID:?Set OPEN_NOTEBOOK_STRATEGY_MODEL_ID in .env}
+      OPEN_NOTEBOOK_ANSWER_MODEL_ID: ${OPEN_NOTEBOOK_ANSWER_MODEL_ID:?Set OPEN_NOTEBOOK_ANSWER_MODEL_ID in .env}
+      OPEN_NOTEBOOK_FINAL_MODEL_ID: ${OPEN_NOTEBOOK_FINAL_MODEL_ID:?Set OPEN_NOTEBOOK_FINAL_MODEL_ID in .env}
+      GROUNDING_ANSWER_THRESHOLD: ${GROUNDING_ANSWER_THRESHOLD:-0.70}
+      GROUNDING_OUT_OF_SCOPE_THRESHOLD: ${GROUNDING_OUT_OF_SCOPE_THRESHOLD:-0.60}
+      OUT_OF_SCOPE_ANSWER_TEXT: ${OUT_OF_SCOPE_ANSWER_TEXT:-恐れ入りますが、こちらでは店舗に関するお問い合わせを承っています。店舗について確認したいことがございましたら、内容をお聞かせください。}
+      REVIEW_PENDING_ANSWER_TEXT: ${REVIEW_PENDING_ANSWER_TEXT:-お問い合わせありがとうございます。恐れ入りますが、そちらの内容は現在このLINEではご案内できません。店舗に関するほかのご質問がございましたら、お尋ねください。}
+      HUMAN_HANDOFF_ANSWER_TEXT: ${HUMAN_HANDOFF_ANSWER_TEXT:-お問い合わせありがとうございます。担当者による確認が必要な内容です。恐れ入りますが、店舗へ直接お問い合わせください。}
+      HUMAN_HANDOFF_PHONE: ${HUMAN_HANDOFF_PHONE:-}
+      HUMAN_HANDOFF_HOURS: ${HUMAN_HANDOFF_HOURS:-}
+      HUMAN_HANDOFF_CHAT_URL: ${HUMAN_HANDOFF_CHAT_URL:-}
+      INTERNAL_ADMIN_TOKEN: ${INTERNAL_ADMIN_TOKEN:?Set INTERNAL_ADMIN_TOKEN in .env}
+      CONVERSATION_MAX_RALLIES: ${CONVERSATION_MAX_RALLIES:-3}
       WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-2}
       WORKER_POLL_MS: ${WORKER_POLL_MS:-250}
       WORKER_LEASE_MS: ${WORKER_LEASE_MS:-120000}
@@ -27,11 +47,16 @@ services:
       AI_TIMEOUT_MS: ${AI_TIMEOUT_MS:-30000}
       LINE_REPLY_CUTOFF_MS: ${LINE_REPLY_CUTOFF_MS:-45000}
       LINE_SEND_TIMEOUT_MS: ${LINE_SEND_TIMEOUT_MS:-10000}
+      EMERGENCY_ANSWER_TEXT: ${EMERGENCY_ANSWER_TEXT:-申し訳ございません。ただいま回答を取得できませんでした。お急ぎの場合は店舗へ直接お問い合わせいただくか、時間をおいてもう一度お試しください。}
       LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET:?Set LINE_CHANNEL_SECRET in .env}
       LINE_CHANNEL_ACCESS_TOKEN: ${LINE_CHANNEL_ACCESS_TOKEN:?Set LINE_CHANNEL_ACCESS_TOKEN in .env}
       OPEN_NOTEBOOK_BASE_URL: http://open-notebook:5055
     volumes:
       - bridge_data:/app/data
+    networks:
+      - backend
+      - app-edge
+      - egress
     depends_on:
       open-notebook:
         condition: service_healthy
@@ -42,23 +67,56 @@ services:
       retries: 10
       start_period: 10s
     restart: always
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
 
   edge-router:
     image: caddy:2.10.2-alpine
     volumes:
       - ./Caddyfile.oci-tunnel:/etc/caddy/Caddyfile:ro
+    networks:
+      - tunnel-edge
+      - app-edge
     depends_on:
       bridge:
         condition: service_healthy
     restart: always
+    security_opt:
+      - no-new-privileges:true
 
   cloudflared:
     image: ${CLOUDFLARED_IMAGE:-cloudflare/cloudflared:2026.9.1}
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env}
+    command: tunnel --no-autoupdate run --token-file /run/secrets/cloudflare_tunnel_token
+    secrets:
+      - cloudflare_tunnel_token
+    networks:
+      - tunnel-edge
+      - admin-edge
     depends_on:
       edge-router:
         condition: service_started
     restart: always
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
   bridge_data:
+
+secrets:
+  cloudflare_tunnel_token:
+    file: ${CLOUDFLARE_TUNNEL_TOKEN_FILE:?Set CLOUDFLARE_TUNNEL_TOKEN_FILE in .env}
+
+networks:
+  backend:
+    internal: true
+  app-edge:
+    internal: true
+  admin-edge:
+    internal: true
+  tunnel-edge: {}
+  egress: {}

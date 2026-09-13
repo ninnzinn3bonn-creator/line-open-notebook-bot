@@ -1929,3 +1929,15 @@ OCIのOpen Notebook UI、SurrealDB、Bridge管理API、SQLiteはインターネ�
 MMP要件では少なくとも、対象店舗と利用者、対応可能・対象外業務、AIが確定してはならない処理、有人移管方式、対応時間、品質・Latency・可用性の受入れ値、月額費用上限、ログと個人情報の保持、管理権限、Knowledge更新、回帰試験、監視、バックアップ、復旧目標、障害時連絡、OCIからVPSへの移行条件を定める。未確定項目は担当者と期限を記載し、PoC合格とMMP提供可否を混同しない。
 
 PoC提出資料には、MMPで採用する要件、PoCで実証済みの範囲、追加開発が必要な差分、運用で補う範囲、既知制約、受入れ試験項目を一覧化する。MMP要件の最終承認者は店舗側の業務責任者とする。
+
+# 69. OCI・Cloudflare・LINEの信頼境界
+
+OCI用Docker Composeは、SurrealDBとOpen Notebookの`backend`、Bridgeと公開ルーターの`app-edge`、Open NotebookとTunnelの`admin-edge`、公開ルーターとTunnelの`tunnel-edge`、外部API通信用の`egress`を分離する。`cloudflared`を`backend`または`app-edge`へ参加させず、Tunnel設定が変更されてもBridge管理APIとSurrealDBへ直接到達できない構造にする。OCI構成ではホストへのコンテナポート公開を行わない。
+
+LINE公開ホストは`edge-router`だけへ接続し、`POST /webhooks/line`と`GET`または`HEAD /health`以外を拒否する。Webhookは本文1 MB以下とし、Bridgeで生の本文に対するLINE署名を検証してからJSONを処理する。有効イベントはWebhook event IDで重複排除する。公開Health応答へProvider、モデルID、内部アドレス等を含めない。
+
+Open Notebook管理ホストは別のTunnel Public Hostnameとし、公開前にCloudflare AccessのSelf-hosted applicationと管理者限定Allow policyを作る。Open Notebook固有のパスワードも併用する。未認証、許可外アカウント、一般公開ホスト経由の3経路で管理画面を拒否できることをPoC受入れ試験に含める。Open Notebook API 5055、Bridge 3001、SurrealDB 8000へのPublic Hostnameを作成しない。
+
+Bridgeの`/internal/*`は公開ルーターに登録せず、十分長い`INTERNAL_ADMIN_TOKEN`によるBearer認証も必須とする。回帰評価Runnerは同じ認証を使う。Tunnel tokenはコマンドラインまたは`.env`本文へ置かず、Git管理外かつ権限600のDocker secretファイルとして渡す。認証情報の値をログ、評価結果、提出物へ出力しない。
+
+Cloudflare Access policy、OCI Security List/NSG、Tunnel Public Hostnameはリポジトリだけでは保証できない。展開時に外部からの拒否試験とOCIの受信ポート検査を実施し、その証跡を秘密情報を除いてPoC提出レポートへ記録する。詳細な確認項目と残存リスクは`docs/SECURITY_ARCHITECTURE_REVIEW.md`を基準とする。
