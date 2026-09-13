@@ -67,3 +67,8 @@ PASSはここに記載した範囲だけを表す。PoC完了条件の合格を�
 | 同一ユーザー3連投 | PASS (AUTOMATED) | 3ワーカー相当でも後続が先行処理を追い越さず、message-1、2、3の順で送信 |
 | Provider Timeout・緊急回答 | PASS (AUTOMATED) | 5ms Timeout、有限再試行1回、2回目失敗後に緊急回答を1回だけ送信し、原因を保存 |
 | Bridge再起動復旧 | PASS (AUTOMATED) | processing中にSQLiteを閉じて再オープンし、期限切れleaseをpendingへ回収後、回答生成・送信完了 |
+| OCI Compose構文 | PASS (LOCAL CONFIG) | `docker-compose.oci.yml`を非秘密の検証値で展開し、Open Notebook、SurrealDB、Bridge、edge-router、cloudflaredの5サービスを確認 |
+| OCI初期化・展開スクリプト | PASS (SYNTAX) | Git Bashで`bootstrap-oci.sh`と`deploy-oci.sh`の構文確認に成功。Arm64実機実行は未実施 |
+| Cloudflare公開経路制限 | PASS (CONFIG) | `Caddyfile.oci-tunnel`で`/webhooks/line`と`/health`のみBridgeへ転送し、その他を404にする構成を追加。固定Tunnel実接続は未実施 |
+| 実店舗データ受入れ検査 | PASS (TEMPLATE) | `npm run store-data:validate`で必須項目、FAQ ID重複、配列型、公開可否を検査。テンプレート1件でPASS |
+| PoC提出レポート骨組み | READY | 固定Revision、受入れ結果、品質・費用、MMP差分、初月観測、既知制約の章を作成 |
