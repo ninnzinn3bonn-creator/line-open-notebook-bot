@@ -4,7 +4,7 @@ Open NotebookをKnowledge/RAG/回答生成基盤として使うLINE問い合わ�
 
 ## 現在の状態
 
-PoC基盤はConoHa VPS 4GBに決定しました。VPS契約前に、このPC上の専用Docker環境をVPS相当の事前ゲートとして使います。ここでOpen Notebook 1.14.0のUI、実OpenAPI、外部AI API、少数Knowledgeへの回答、Bridge接続、再起動後の永続性まで確認してからConoHaへ進みます。
+PoCの開発期間と納品後1か月はOracle Cloud Infrastructure（OCI）を暫定基盤として検証・運用します。このPC上の専用Docker環境を事前ゲートに使い、Open Notebook 1.14.0のUI、実OpenAPI、外部AI API、Knowledge回答、Bridge接続、再起動後の永続性を確認してからOCIへ展開します。納品後1か月の観測結果に基づき、継続利用またはVPSサービスへの移行を判断します。
 
 ローカルVPS相当検証は[docs/LOCAL_VPS_VALIDATION.md](docs/LOCAL_VPS_VALIDATION.md)に従う。
 
@@ -16,7 +16,7 @@ PoC基盤はConoHa VPS 4GBに決定しました。VPS契約前に、このPC上�
 4. `http://localhost:5055/health`と`http://localhost:8502`を確認する。
 5. `npm install`、`npm test`、`npm run dev`を実行する。
 
-ConoHa VPSへの構築は[docs/SERVER_SETUP.md](docs/SERVER_SETUP.md)に従う。
+サーバー構築の共通手順は[docs/SERVER_SETUP.md](docs/SERVER_SETUP.md)、OCI固有の判断と制約は[docs/ORACLE_ALWAYS_FREE_FEASIBILITY.md](docs/ORACLE_ALWAYS_FREE_FEASIBILITY.md)に従う。
 
 Open Notebookの認証情報はUIのManage → Modelsから登録し、Connection Testが成功したモデルだけを評価対象にします。APIキーをGitへ保存しません。
 

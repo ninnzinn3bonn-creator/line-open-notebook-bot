@@ -6,7 +6,7 @@
 
 Open Notebookを前提とする本PoCは、Oracle Cloud Infrastructure（OCI）のAmpere A1 Always Free上で技術的に動作する可能性が高い。推奨候補はUbuntu Arm64、2 OCPU、8〜12GB RAM、50〜100GB Boot Volumeの単一VMで、現在のDocker Compose構成を維持する。
 
-ただし、クライアント向けの常時稼働基盤としてConoHa VPSを完全に置き換える判断はしない。Always Freeにはリージョン内の在庫不足、低利用インスタンスの回収、無償利用者の公式サポート対象外という運用上の制約がある。本Botの想定利用量は月10人・各5ラリー程度であり、低利用回収条件へ入りやすい。
+本PoCではOCIを開発期間と納品後1か月の暫定基盤として採用する。Always Freeにはリージョン内の在庫不足、低利用インスタンスの回収、無償利用者の公式サポート対象外という運用上の制約があるため、納品後1か月の観測結果をもとに、OCI継続またはVPSサービスへの移行を判断する。本Botの想定利用量は月10人・各5ラリー程度であり、低利用回収条件へ入りやすい。
 
 採用判断は次のとおりとする。
 
@@ -59,21 +59,24 @@ OCPU: 2
 RAM: 8〜12GB
 Boot Volume: 50〜100GB
 Public IP: 1
-Public ports: 22, 80, 443
+Public ingress: 原則なし（管理経路を別途確保）
+Outbound: Cloudflare Tunnelに必要な通信と外部AI API
 Private Docker ports: 3001, 5055, 8000, 8502
+HTTP ingress: 固定Cloudflare Tunnel → Bridge:3001
 ```
 
 Groq 120BとGemini Embeddingは外部APIを使うため、GPUは不要。月10人・各5ラリーではCPUより、外部APIのLatencyと可用性が支配的になる。2 OCPUでもPoCの逐次処理は現実的だが、10件Burst時の処理時間はA1実機で再測定する。
 
 ## 既存構成への変更
 
-アプリケーション構造は変更しない。Open Notebook、SurrealDB、Bridge、Caddyを同一Docker Composeで動かす。必要な変更はデプロイ対象OSとCPUアーキテクチャ、OCIネットワーク設定、バックアップ先である。
+アプリケーション構造は変更しない。Open Notebook、SurrealDB、Bridge、`cloudflared`を同一Docker Composeで動かし、公開HTTP入口はCloudflare Tunnelへ統一する。CaddyはTunnel内で必要な場合だけ残し、OCIの80/443を直接公開する前提にはしない。必要な変更はデプロイ対象OSとCPUアーキテクチャ、OCIネットワーク設定、Cloudflare管理ドメイン、固定Tunnel、バックアップ先である。
 
 ConoHa用`bootstrap-conoha.sh`を直接流用せず、次をOCI用スクリプトとして分離する。
 
 - Ubuntu Arm64へのDocker導入
-- OCI VCN Security ListまたはNetwork Security Groupで22/80/443を許可
-- Ubuntu側firewallでも同じポートだけを許可
+- OCI VCN Security ListまたはNetwork Security Groupの受信を原則閉じ、管理経路だけを許可
+- `cloudflared`からCloudflareへの外向き通信を許可
+- 固定Tunnel、DNS hostname、Webhook URL、自動起動、外形監視を設定
 - Boot Volume backupまたはObject Storageへの暗号化バックアップ
 - Arm64でのCompose build、Health、OpenAPI、42問回帰、LINE E2E
 
