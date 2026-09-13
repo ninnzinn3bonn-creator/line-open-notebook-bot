@@ -47,3 +47,11 @@
 7. Knowledge revision、Source ID、投入内容のハッシュ、モデル、Embedding、Query mode、Prompt revisionを評価記録へ残す。
 
 受領原本はリポジトリへ置かない。作業用データをリポジトリ内で扱う必要がある場合は`evaluation/datasets/private/`を使用し、Gitの追跡対象になっていないことを投入前後に確認する。
+
+JSONへ正規化した後は、次のコマンドで必須項目、FAQ ID重複、配列型、公開可否を検査する。
+
+```powershell
+npm run store-data:validate -- evaluation/datasets/private/store-v001.json
+```
+
+入力形式は`evaluation/datasets/store-data.template.json`をコピーして使用する。テンプレートのダミー値を実データとして投入しない。

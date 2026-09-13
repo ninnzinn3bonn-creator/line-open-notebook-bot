@@ -14,7 +14,7 @@
 4. [完了] 42問版Datasetへ有人希望・予約確定要求を追加
 5. [完了] 同時3件、10件Burst、同一ユーザー3連投の自動試験
 6. [完了] Provider Timeout、再試行、緊急回答、DB再オープン後の期限切れリース回収試験
-7. [未着手] PoC提出レポートの骨組み作成
+7. [完了] PoC提出レポートの骨組み作成
 
 ## Track 2: LINE認証後
 
@@ -34,9 +34,9 @@
 
 ## Track 4: OCI暫定基盤への展開
 
-1. OCI Ampere A1、Ubuntu Arm64、SSH鍵とCloudflare管理ドメインを準備
-2. Arm64でDocker、Open Notebook、SurrealDB、Bridge、`cloudflared`を固定版で展開
-3. LINE WebhookのHTTPS入口をCloudflare Tunnelへ統一し、OCI側のWebポートを直接公開しない
+1. [外部入力待ち] OCI Ampere A1、Ubuntu Arm64、SSH鍵とCloudflare管理ドメインを準備
+2. [実装済み・実機未検証] Arm64用初期化・展開スクリプトとOCI Composeを作成
+3. [実装済み・認証待ち] LINE Webhookの公開経路をCloudflare Tunnelと最小経路ルーターへ統一
 4. VM外バックアップ、再起動設定、復元手順、Tunnel停止時の検知を確認
 5. OCI上で42問評価、LINE E2E、同時実行、障害復旧を再実施
 6. 開発期間と納品後1か月、CPU・メモリ・容量・停止・回収・応答時間・復旧実績を記録

@@ -1,8 +1,29 @@
-# ConoHa VPS 4GB PoCセットアップ
+# サーバーセットアップ
+
+開発期間と納品後1か月はOCI Ampere A1＋Cloudflare Tunnelを先行構成とする。以下のConoHa手順は、初月後にVPSへ移行すると判断した場合の代替手順として保持する。
+
+## OCI先行構成
+
+1. Ubuntu Arm64のOCI Ampere A1を作成し、SSH公開鍵認証を設定する。
+2. Cloudflareで固定Tunnel、LINE Webhook用ホスト名、管理用ホスト名を作成する。
+3. LINE Webhook用ホスト名のServiceを`http://edge-router:8080`へ向ける。
+4. 管理用ホスト名を`http://open-notebook:8502`へ向け、Cloudflare Accessで管理者だけに制限する。
+5. OCIの受信規則は管理用SSHだけに絞り、80/443を公開しない。
+6. リポジトリを`/opt/line-open-notebook-bot`へ配置する。
+
+```bash
+sudo bash scripts/bootstrap-oci.sh
+cp .env.example .env
+chmod 600 .env
+# .envへ実値を設定した後
+bash scripts/deploy-oci.sh
+```
+
+`docker-compose.oci.yml`では`cloudflared`から`edge-router:8080`へ接続する。`edge-router`が公開するのは`/webhooks/line`と`/health`だけで、Open Notebook、SurrealDB、Bridge管理APIには転送しない。Open Notebook管理画面が必要な場合は、別のCloudflare Access保護ホスト名として設定する。
 
 ## 採用構成
 
-- ConoHa VPS 4GB、4 vCPU、100GB SSD、GPUなし
+- 初月後に移行判断した場合のConoHa VPS 4GB、4 vCPU、100GB SSD、GPUなし
 - Ubuntu LTS
 - Docker Engine + Docker Compose plugin
 - CaddyによるHTTPS

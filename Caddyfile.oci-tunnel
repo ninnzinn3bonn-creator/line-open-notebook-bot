@@ -1,0 +1,20 @@
+:8080 {
+  handle /webhooks/line {
+    reverse_proxy bridge:3001
+  }
+
+  handle /health {
+    reverse_proxy bridge:3001
+  }
+
+  handle {
+    respond "Not Found" 404
+  }
+
+  header {
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "no-referrer"
+    -Server
+  }
+}

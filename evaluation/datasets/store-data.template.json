@@ -1,0 +1,18 @@
+{
+  "store_revision": "store-v001",
+  "effective_from": "2099-01-01",
+  "provided_by": "店舗側提供者名",
+  "approved_by": "店舗側承認者名",
+  "approved_at": "2099-01-01T00:00:00+09:00",
+  "faqs": [
+    {
+      "faq_id": "hours-001",
+      "category": "営業時間",
+      "question_variants": ["営業時間を教えてください"],
+      "approved_answer": "承認済み回答を記載",
+      "conditions": [],
+      "exceptions": [],
+      "public": true
+    }
+  ]
+}

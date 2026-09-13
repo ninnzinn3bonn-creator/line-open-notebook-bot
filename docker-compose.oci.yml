@@ -1,0 +1,64 @@
+services:
+  surrealdb:
+    ports: !reset []
+    restart: always
+
+  open-notebook:
+    ports: !reset []
+    environment:
+      API_URL: https://${OPEN_NOTEBOOK_ADMIN_HOST:?Set OPEN_NOTEBOOK_ADMIN_HOST in .env}
+      OPEN_NOTEBOOK_PASSWORD: ${OPEN_NOTEBOOK_PASSWORD:?Set OPEN_NOTEBOOK_PASSWORD in .env}
+      OPEN_NOTEBOOK_WORKER_MAX_TASKS: "1"
+    restart: always
+
+  bridge:
+    build:
+      context: .
+      dockerfile: Dockerfile.bridge
+    environment:
+      BRIDGE_PORT: "3001"
+      SQLITE_PATH: /app/data/queue.db
+      ANSWER_PROVIDER: ${ANSWER_PROVIDER:-open-notebook}
+      WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-2}
+      WORKER_POLL_MS: ${WORKER_POLL_MS:-250}
+      WORKER_LEASE_MS: ${WORKER_LEASE_MS:-120000}
+      MAX_RETRIES: ${MAX_RETRIES:-2}
+      RETRY_DELAY_MS: ${RETRY_DELAY_MS:-2000}
+      AI_TIMEOUT_MS: ${AI_TIMEOUT_MS:-30000}
+      LINE_REPLY_CUTOFF_MS: ${LINE_REPLY_CUTOFF_MS:-45000}
+      LINE_SEND_TIMEOUT_MS: ${LINE_SEND_TIMEOUT_MS:-10000}
+      LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET:?Set LINE_CHANNEL_SECRET in .env}
+      LINE_CHANNEL_ACCESS_TOKEN: ${LINE_CHANNEL_ACCESS_TOKEN:?Set LINE_CHANNEL_ACCESS_TOKEN in .env}
+      OPEN_NOTEBOOK_BASE_URL: http://open-notebook:5055
+    volumes:
+      - bridge_data:/app/data
+    depends_on:
+      open-notebook:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: always
+
+  edge-router:
+    image: caddy:2.10.2-alpine
+    volumes:
+      - ./Caddyfile.oci-tunnel:/etc/caddy/Caddyfile:ro
+    depends_on:
+      bridge:
+        condition: service_healthy
+    restart: always
+
+  cloudflared:
+    image: ${CLOUDFLARED_IMAGE:-cloudflare/cloudflared:2026.9.1}
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env}
+    depends_on:
+      edge-router:
+        condition: service_started
+    restart: always
+
+volumes:
+  bridge_data:
