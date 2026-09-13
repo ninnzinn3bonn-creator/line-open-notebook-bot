@@ -1,6 +1,6 @@
 services:
   surrealdb:
-    image: surrealdb/surrealdb:v2
+    image: ${SURREALDB_IMAGE:-surrealdb/surrealdb:v2@sha256:d653f6c8a89e81f865ee31cd2f587c50f50ace922175e04150b1e385d2f86011}
     command:
       - start
       - --log
@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
 
   open-notebook:
-    image: lfnovo/open_notebook:${OPEN_NOTEBOOK_VERSION:-1.14.0}
+    image: ${OPEN_NOTEBOOK_IMAGE:-lfnovo/open_notebook:1.14.0@sha256:e53f90d6153fcf4a64604d9a0c12cb0428a32cfb8dbcbb72e81ab12c013ee330}
     ports:
       - "127.0.0.1:8502:8502"
       - "127.0.0.1:5055:5055"

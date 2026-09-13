@@ -13,15 +13,18 @@
 - OCI／VPS共通の再構築可能な構成
 - Tunnel tokenのsecret化、用途別Dockerネットワーク分離、内部回答APIのBearer認証
 - OCI・Cloudflare・LINE・管理者経路のセキュリティ設計レビュー
+- Open Notebook、SurrealDB、Cloudflared、Caddyのmulti-arch image digest固定
+- 停止整合性、暗号化、SHA-256検査を備えたOCIバックアップ／復元スクリプト
+- OCI内部サービスと任意の公開URLを検査するヘルスチェックコマンド
 
 ## 引き続き認証なしで進められる
 
 - 実店舗データ受領後の変換ツール（実データをGitへ保存せず実行）
 - 実店舗由来Golden Datasetの生成補助と機械検査
 - MMP要件の初期値、合否表、PoCとの差分表の整備
-- バックアップ・復元・監視スクリプトのローカル検証
+- OCI実機でのバックアップ・新規データ領域への復元試験
 - Tunnel停止、Provider障害、重複Webhookの追加自動試験
-- OCI Arm64で確認したコンテナimage digestの固定
+- OCI Arm64で固定image digestの起動照合
 - TEST_REPORTとPoC提出レポートへの検証結果反映
 
 ## 外部認証・利用者操作が必要

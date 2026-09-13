@@ -26,6 +26,35 @@ bash scripts/deploy-oci.sh
 
 展開前後の境界、拒否試験、残存リスクは[SECURITY_ARCHITECTURE_REVIEW.md](SECURITY_ARCHITECTURE_REVIEW.md)を確認する。
 
+## OCIバックアップと復元
+
+秘密情報とは別に、バックアップ暗号化用の長いランダムパスワードをGit管理外のファイルへ保存する。
+
+```bash
+mkdir -p ./secrets
+openssl rand -base64 48 > ./secrets/backup-password
+chmod 600 ./secrets/backup-password
+BACKUP_PASSWORD_FILE=./secrets/backup-password bash scripts/backup-oci.sh /mnt/off-vm-backup
+```
+
+バックアップはBridge、Open Notebook、SurrealDBを停止して整合性を取り、Bridge SQLite、Open Notebook data、SurrealDB dataをAES-256で暗号化する。`.env`、Tunnel token、API keyは含めない。生成された`.enc`と`.sha256`をOCI VM外へ保管する。
+
+復元は新しいチェックアウトと同じGit revisionで`.env`と各secretを再設定し、空のデータ領域に対して実行する。
+
+```bash
+BACKUP_PASSWORD_FILE=./secrets/backup-password bash scripts/restore-oci.sh /mnt/off-vm-backup/line-open-notebook-bot-YYYYMMDDTHHMMSSZ.tar.gz.enc
+```
+
+復元後はHealth、Open NotebookのSource件数、保留中review/handoff、代表質問、LINE重複返信がないことを確認する。暗号化パスワードをバックアップと同じ場所だけに保存しない。
+
+内部サービスと任意の公開Health URLは次で検査できる。監視サービスからの外形監視は別に設定し、このコマンドだけでTunnelの到達性を合格扱いにしない。
+
+```bash
+PUBLIC_HEALTH_URL=https://line.example.com/health bash scripts/healthcheck-oci.sh
+```
+
+systemd timerまたは監視エージェントから実行する場合は、失敗時だけ運用担当者へ通知する。通知先と監視頻度はMMP要件で確定する。
+
 ## 採用構成
 
 - 初月後に移行判断した場合のConoHa VPS 4GB、4 vCPU、100GB SSD、GPUなし

@@ -38,8 +38,13 @@ describe("LINE webhook", () => {
     });
 
     expect(response.status).toBe(200);
+    const replay = await fetch(`http://127.0.0.1:${address.port}/webhooks/line`, {
+      method: "POST", headers: { "content-type": "application/json", "x-line-signature": signature }, body
+    });
+    expect(replay.status).toBe(200);
     expect(database.prepare("SELECT webhook_event_id, user_id, message_text FROM jobs").get())
       .toEqual({ webhook_event_id: "evt-1", user_id: "user-1", message_text: "営業時間は？" });
+    expect(database.prepare("SELECT count(*) count FROM jobs").get()).toEqual({ count: 1 });
     database.close();
   });
 

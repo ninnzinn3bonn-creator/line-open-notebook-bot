@@ -68,7 +68,11 @@ PASSはここに記載した範囲だけを表す。PoC完了条件の合格を�
 | Provider Timeout・緊急回答 | PASS (AUTOMATED) | 5ms Timeout、有限再試行1回、2回目失敗後に緊急回答を1回だけ送信し、原因を保存 |
 | Bridge再起動復旧 | PASS (AUTOMATED) | processing中にSQLiteを閉じて再オープンし、期限切れleaseをpendingへ回収後、回答生成・送信完了 |
 | OCI Compose構文 | PASS (LOCAL CONFIG) | `docker-compose.oci.yml`を非秘密の検証値で展開し、Open Notebook、SurrealDB、Bridge、edge-router、cloudflaredの5サービスを確認 |
+| OCI image固定 | PASS (CONFIG) | Open Notebook、SurrealDB、Cloudflared、Caddyを2026-09-13確認のmulti-arch index digestへ固定。OCI Arm64実起動は未実施 |
 | OCI初期化・展開スクリプト | PASS (SYNTAX) | Git Bashで`bootstrap-oci.sh`と`deploy-oci.sh`の構文確認に成功。Arm64実機実行は未実施 |
 | Cloudflare公開経路制限 | PASS (CONFIG) | `Caddyfile.oci-tunnel`で`/webhooks/line`と`/health`のみBridgeへ転送し、その他を404にする構成を追加。固定Tunnel実接続は未実施 |
+| OCIバックアップ／復元 | READY / REAL HOST PENDING | 停止整合性、AES-256暗号化、SHA-256検査、復元先検査を実装し、Bash構文検査に成功。OCI実機でのデータ復元確認は未実施 |
+| OCI内部監視 | READY / REAL HOST PENDING | 5サービスのrunning状態、Bridge・Open Notebook内部Health、任意のTunnel外形URLを検査するコマンドを実装。通知先はMMP承認待ち |
+| Webhook再送重複排除 | PASS (INTEGRATION) | 同じ署名済みWebhook event IDを2回送信し、HTTP 200を返しつつjobが1件だけ保存されることを確認 |
 | 実店舗データ受入れ検査 | PASS (TEMPLATE) | `npm run store-data:validate`で必須項目、FAQ ID重複、配列型、公開可否を検査。テンプレート1件でPASS |
 | PoC提出レポート骨組み | READY | 固定Revision、受入れ結果、品質・費用、MMP差分、初月観測、既知制約の章を作成 |

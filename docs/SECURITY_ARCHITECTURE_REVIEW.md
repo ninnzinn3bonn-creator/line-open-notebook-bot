@@ -40,8 +40,8 @@ OCI上のDocker Compose、Cloudflare Tunnel、LINE Messaging API、Open Notebook
 | 優先度 | リスク | PoCでの扱い |
 |---|---|---|
 | 高 | Access policyの誤設定で管理画面が公開される | 展開チェックリストと外部からの拒否試験を合格条件にする |
-| 高 | バックアップ未検証によりSQLite・Knowledgeを復旧できない | OCI実機でバックアップ／復元試験を行う |
-| 中 | コンテナイメージのタグ差し替えで再現性が落ちる | OCI Arm64で動作確認したdigestを記録し、提出版で固定する |
+| 高 | バックアップスクリプトは実装済みだが実機復元が未検証 | OCI実機の新規データ領域でバックアップ／復元試験を行う |
+| 中 | 固定したmulti-arch image digestのArm64起動が未確認 | OCI Arm64で4イメージを起動し、提出版の記録と照合する |
 | 中 | 有効なWebhookの再送・大量送信でキューが増える | ID重複排除を維持し、負荷試験後にCloudflare rate limitを決める |
 | 中 | OCIホストのroot権限取得時は環境変数やデータを読まれる | SSH鍵、管理元IP制限、OS更新、最小権限運用を納品条件にする |
 | 中 | Open Notebook UIとAPIが同一コンテナであり管理APIだけを細分化できない | 管理ホスト全体をAccessで保護し、将来必要なら別管理Proxyを追加する |
