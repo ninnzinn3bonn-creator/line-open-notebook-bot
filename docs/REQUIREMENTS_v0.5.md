@@ -1941,3 +1941,11 @@ Open Notebook管理ホストは別のTunnel Public Hostnameとし、公開前に
 Bridgeの`/internal/*`は公開ルーターに登録せず、十分長い`INTERNAL_ADMIN_TOKEN`によるBearer認証も必須とする。回帰評価Runnerは同じ認証を使う。Tunnel tokenはコマンドラインまたは`.env`本文へ置かず、Git管理外かつ権限600のDocker secretファイルとして渡す。認証情報の値をログ、評価結果、提出物へ出力しない。
 
 Cloudflare Access policy、OCI Security List/NSG、Tunnel Public Hostnameはリポジトリだけでは保証できない。展開時に外部からの拒否試験とOCIの受信ポート検査を実施し、その証跡を秘密情報を除いてPoC提出レポートへ記録する。詳細な確認項目と残存リスクは`docs/SECURITY_ARCHITECTURE_REVIEW.md`を基準とする。
+
+# 70. Cloudflareプロジェクト分離
+
+本Botは、開発者が通常利用している既存のCloudflare Tunnel、Access Application、Service Token、DNS hostname、監視設定を共用しない。本Bot専用の識別子を`CLOUDFLARE_PROJECT_SLUG`として定め、専用のNamed Tunnel、LINE公開hostname、Open Notebook管理hostname、Access Application、Access policy、Tunnel token、監視対象を作成する。
+
+Cloudflareアカウントを共用する場合も、専用リソース名、専用token、専用Access policyによって論理分離し、既存Tunnelへ本BotのPublic Hostnameを追加しない。クライアントへ移管する正式環境では、原則としてクライアント所有Cloudflareアカウントまたはクライアント管理zone内に同じ専用構成を再作成する。開発者の通常利用リソースへの恒久依存を残さない。
+
+PoCのCloudflare設定台帳にはAccount IDの末尾4文字、Zone名、Tunnel IDの末尾8文字、Tunnel名、2つのhostname、Access Application名、policy名、作成者、作成日、移管・廃止予定を記録する。完全なtoken、秘密鍵、Cookieは記録しない。展開前にTunnel tokenが台帳の専用Tunnelに属することを画面で照合する。

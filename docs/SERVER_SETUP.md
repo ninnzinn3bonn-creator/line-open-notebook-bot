@@ -5,7 +5,7 @@
 ## OCI先行構成
 
 1. Ubuntu Arm64のOCI Ampere A1を作成し、SSH公開鍵認証を設定する。
-2. Cloudflareで固定Tunnel、LINE Webhook用ホスト名、管理用ホスト名を作成する。管理用ホスト名を公開する前にAccessのSelf-hosted applicationと管理者限定Allow policyを作成する。
+2. `CLOUDFLARE_PROJECT_SLUG=line-open-notebook-poc`の専用リソース群として、新規Named Tunnel、LINE Webhook用ホスト名、管理用ホスト名を作成する。普段使用している既存Tunnelへ追加しない。管理用ホスト名を公開する前に本Bot専用Access Self-hosted applicationと管理者限定Allow policyを作成する。
 3. LINE Webhook用ホスト名のServiceを`http://edge-router:8080`へ向ける。
 4. 管理用ホスト名を`http://open-notebook:8502`へ向け、Cloudflare Accessで管理者だけに制限する。
 5. OCIの受信規則は管理用SSHだけに絞り、80/443を公開しない。
@@ -23,6 +23,19 @@ bash scripts/deploy-oci.sh
 ```
 
 `docker-compose.oci.yml`では`cloudflared`から`edge-router:8080`へ接続する。`edge-router`が公開するのは`/webhooks/line`と`/health`だけで、Open Notebook、SurrealDB、Bridge管理APIには転送しない。Open Notebook管理画面が必要な場合は、別のCloudflare Access保護ホスト名として設定する。
+
+Cloudflareのリソース名は次のように統一する。Cloudflare製品上に共通の「Project」オブジェクトがない箇所は、この接頭辞と専用リソースによってプロジェクト単位に分離する。
+
+| リソース | 名前の例 |
+|---|---|
+| Project slug | `line-open-notebook-poc` |
+| Named Tunnel | `line-open-notebook-poc-oci` |
+| Access Application | `line-open-notebook-poc-admin` |
+| Access policy | `line-open-notebook-poc-admin-allow` |
+| LINE hostname | `line-bot.example.com` |
+| 管理hostname | `line-bot-admin.example.com` |
+
+Tunnel tokenも専用品を使用する。既存プロジェクトのtoken、Service Token、Access Groupは流用しない。
 
 展開前後の境界、拒否試験、残存リスクは[SECURITY_ARCHITECTURE_REVIEW.md](SECURITY_ARCHITECTURE_REVIEW.md)を確認する。
 

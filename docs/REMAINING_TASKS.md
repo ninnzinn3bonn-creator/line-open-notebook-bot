@@ -30,7 +30,7 @@
 ## 外部認証・利用者操作が必要
 
 - OCI A1インスタンス作成、SSH鍵登録、実機接続
-- Cloudflare固定Tunnel、DNS、Access policy、Tunnel tokenの発行
+- 本Bot専用Cloudflare Named Tunnel、DNS hostname、Access Application、policy、Tunnel tokenの発行（既存プロジェクトと非共用）
 - Access未認証・許可外アカウントの拒否試験とOCI受信ポート検査
 - LINE Webhook URLの固定ホスト名への切替と実端末E2E
 - Groq／Geminiの本番用認証情報設定

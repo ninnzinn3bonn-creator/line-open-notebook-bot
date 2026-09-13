@@ -34,7 +34,7 @@
 
 ## Track 4: OCI暫定基盤への展開
 
-1. [外部入力待ち] OCI Ampere A1、Ubuntu Arm64、SSH鍵とCloudflare管理ドメインを準備
+1. [外部入力待ち] OCI Ampere A1、Ubuntu Arm64、SSH鍵とCloudflare管理ドメインを準備し、本Bot専用のNamed Tunnel・hostname・Access Applicationを作成
 2. [実装済み・実機未検証] Arm64用初期化・展開スクリプトとOCI Composeを作成
 3. [実装済み・認証待ち] LINE Webhookの公開経路をCloudflare Tunnelと最小経路ルーターへ統一
 4. VM外バックアップ、再起動設定、復元手順、Tunnel停止時の検知を確認

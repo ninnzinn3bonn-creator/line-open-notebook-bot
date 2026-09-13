@@ -28,12 +28,13 @@ OCI上のDocker Compose、Cloudflare Tunnel、LINE Messaging API、Open Notebook
 
 ## 外部設定で必ず確認する事項
 
-1. Tunnelの公開ホストは`PUBLIC_HOST → http://edge-router:8080`、管理ホストは`OPEN_NOTEBOOK_ADMIN_HOST → http://open-notebook:8502`だけにする。
-2. Open Notebook管理ホストを公開する前にCloudflare AccessのSelf-hosted applicationと管理者限定Allow policyを作る。未ログイン、許可外アカウント、別端末で拒否されることを確認する。
-3. Bridge、SurrealDB、Open Notebook APIポート5055へのPublic Hostnameを作らない。
-4. OCI Security List/NSGはインターネットから80、443、3001、5055、8000、8502を許可しない。SSHは管理元IPへ限定する。
-5. LINE DevelopersのWebhook URLは公開ホストの`/webhooks/line`だけを指定し、署名不正要求が401になることを実測する。
-6. Cloudflareのアカウント設定でAccess保護のないTunnel公開経路を拒否する設定を検討し、管理ホストの設定漏れを検知する。
+1. 本Bot専用のNamed TunnelとTunnel tokenを新規作成し、既存プロジェクトのTunnel、Access Application、Service Tokenを共用しない。
+2. Tunnelの公開ホストは`PUBLIC_HOST → http://edge-router:8080`、管理ホストは`OPEN_NOTEBOOK_ADMIN_HOST → http://open-notebook:8502`だけにする。
+3. Open Notebook管理ホストを公開する前にCloudflare AccessのSelf-hosted applicationと管理者限定Allow policyを作る。未ログイン、許可外アカウント、別端末で拒否されることを確認する。
+4. Bridge、SurrealDB、Open Notebook APIポート5055へのPublic Hostnameを作らない。
+5. OCI Security List/NSGはインターネットから80、443、3001、5055、8000、8502を許可しない。SSHは管理元IPへ限定する。
+6. LINE DevelopersのWebhook URLは公開ホストの`/webhooks/line`だけを指定し、署名不正要求が401になることを実測する。
+7. Cloudflareのアカウント設定でAccess保護のないTunnel公開経路を拒否する設定を検討し、管理ホストの設定漏れを検知する。
 
 ## 残存リスクとPoCでの扱い
 
