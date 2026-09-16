@@ -63,6 +63,7 @@ PASSはここに記載した範囲だけを表す。PoC完了条件の合格を�
 | 有人移管ルーティング | PASS | `human-handoff-v001`。明示的な有人希望と予約・注文・取り置き・返金等の高リスク確定要求を検索前に`needs_review`へ送り、理由付きhandoff recordをSQLiteへ保存 |
 | 有人移管管理API | PASS | Bearer認証付き一覧・解決API、重複防止、会話の`human_handoff`終了、設定可能な案内文・電話・受付時間・チャットURLを実装 |
 | 有人移管決定経路 | PASS | 42問版へ有人希望と予約確定要求を追加。Mock Bridge実経路で2/2、Latency最大1ms |
+| 有人移管稼働Bridge確認 | PASS | 稼働中Bridgeで「担当者に相談したいです」がAIを呼ばず`needs_review`となり、pending登録、認証済み管理APIでの一覧取得・対応完了まで確認 |
 | 3ユーザー同時・10件Burst | PASS (AUTOMATED) | 3ワーカー相当を並行実行し最大同時数3、10件すべて1回ずつ送信成功 |
 | 同一ユーザー3連投 | PASS (AUTOMATED) | 3ワーカー相当でも後続が先行処理を追い越さず、message-1、2、3の順で送信 |
 | Provider Timeout・緊急回答 | PASS (AUTOMATED) | 5ms Timeout、有限再試行1回、2回目失敗後に緊急回答を1回だけ送信し、原因を保存 |
