@@ -14,7 +14,7 @@ describe("AnswerPolicyProvider", () => {
     const result = await provider.answer({ message: "こんにちわ。", userId: "u1" });
 
     expect(inner.answer).not.toHaveBeenCalled();
-    expect(result.text).toBe("こんにちは。お問い合わせありがとうございます。ご用件をお聞かせください。");
+    expect(result.text).toBe("こんにちは。お問い合わせありがとうございます。営業時間、アクセス、予約など、店舗について知りたいことをお送りください。");
     expect(result.promptRevision).toBe(ANSWER_POLICY_REVISION);
   });
 

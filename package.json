@@ -10,6 +10,7 @@
     "line:preflight": "node scripts/line-e2e-preflight.mjs",
     "store-data:validate": "node scripts/validate-store-data.mjs",
     "source:synthetic": "node scripts/register-synthetic-source.mjs",
+    "release:build": "node scripts/build-release.mjs",
     "inspect:openapi": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/inspect-openapi.ps1"
   },
   "dependencies": {

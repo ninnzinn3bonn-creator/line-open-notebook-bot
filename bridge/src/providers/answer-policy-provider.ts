@@ -1,6 +1,6 @@
 import type { AnswerInput, AnswerProvider, AnswerResult, SourceReference } from "./answer-provider.js";
 
-export const ANSWER_POLICY_REVISION = "storefront-ja-v001";
+export const ANSWER_POLICY_REVISION = "storefront-ja-v002";
 
 const GREETING_PATTERN = /^(?:こんにちは|こんにちわ|こんばんは|おはよう(?:ございます)?|もしもし)[\s!！。．?？]*$/u;
 const SOURCE_CITATION_PATTERN = /[【\[［]\s*\*{0,2}(source:[a-z0-9]+)\*{0,2}\s*[】\]］]/giu;
@@ -12,7 +12,7 @@ export class AnswerPolicyProvider implements AnswerProvider {
     const startedAt = performance.now();
     if (isDeterministicGreeting(input.message)) {
       return {
-        text: "こんにちは。お問い合わせありがとうございます。ご用件をお聞かせください。",
+        text: "こんにちは。お問い合わせありがとうございます。営業時間、アクセス、予約など、店舗について知りたいことをお送りください。",
         latencyMs: Math.round(performance.now() - startedAt),
         promptRevision: ANSWER_POLICY_REVISION,
         route: "deterministic",

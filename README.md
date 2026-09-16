@@ -35,3 +35,16 @@ npm run eval
 ## バージョン固定
 
 Open Notebookは`1.14.0`を使用します。`latest`タグは使用しません。SurrealDBは公式v1.14.0 Composeに合わせて`v2`を使用し、初回Pull後に実Digestを記録して以降の比較を固定します。
+## サーバー展開・移管
+
+ローカル開発、Ubuntuへの展開、納品・移管手順は[納品・移管ランブック](docs/HANDOVER_RUNBOOK.md)を参照する。
+
+Ubuntuへの基本展開は次の順序で行う。
+
+```bash
+sudo DEPLOYMENT_MODE=tunnel bash scripts/bootstrap-server.sh
+DEPLOYMENT_MODE=tunnel bash scripts/doctor.sh
+DEPLOYMENT_MODE=tunnel bash scripts/deploy.sh
+sudo DEPLOYMENT_MODE=tunnel bash scripts/install-systemd.sh
+DEPLOYMENT_MODE=tunnel bash scripts/acceptance-test.sh
+```

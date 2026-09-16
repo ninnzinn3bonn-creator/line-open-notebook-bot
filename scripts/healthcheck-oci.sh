@@ -2,10 +2,14 @@
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
-compose=(docker compose -f docker-compose.yml -f docker-compose.oci.yml)
+mode="${DEPLOYMENT_MODE:-tunnel}"
+compose=(docker compose -f docker-compose.yml)
+[[ "$mode" == "tunnel" ]] && compose+=(-f docker-compose.oci.yml) || compose+=(-f docker-compose.production.yml)
 failures=0
 
-for service in surrealdb open-notebook bridge edge-router cloudflared; do
+services=(surrealdb open-notebook bridge)
+[[ "$mode" == "tunnel" ]] && services+=(edge-router cloudflared) || services+=(caddy)
+for service in "${services[@]}"; do
   if [[ -z "$("${compose[@]}" ps --status running -q "$service")" ]]; then
     echo "FAIL service is not running: $service" >&2
     failures=$((failures + 1))
@@ -42,4 +46,3 @@ if [[ "$failures" -gt 0 ]]; then
   exit 1
 fi
 echo "Health check passed"
-

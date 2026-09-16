@@ -16,6 +16,7 @@
 - Open Notebook、SurrealDB、Cloudflared、Caddyのmulti-arch image digest固定
 - 停止整合性、暗号化、SHA-256検査を備えたOCIバックアップ／復元スクリプト
 - OCI内部サービスと任意の公開URLを検査するヘルスチェックコマンド
+- Ubuntu共通bootstrap、事前診断、障害診断、展開、systemd自動起動、受入れ試験、納品ZIP生成
 
 ## 引き続き認証なしで進められる
 

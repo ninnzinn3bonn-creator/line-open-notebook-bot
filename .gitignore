@@ -16,3 +16,4 @@ evaluation/results/*
 evaluation/baselines/*.json
 logs/
 openapi/openapi.json
+release/

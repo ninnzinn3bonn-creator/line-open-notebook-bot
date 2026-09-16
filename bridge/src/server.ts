@@ -3,7 +3,7 @@ import { createApp } from "./app.js";
 import { initializeDatabase } from "./db/database.js";
 import { JobQueue } from "./db/queue.js";
 import { startWorkers } from "./jobs/worker.js";
-import { HttpLineClient } from "./line/client.js";
+import { HttpLineClient, parseQuickReplies } from "./line/client.js";
 import { MockAnswerProvider } from "./providers/mock-answer-provider.js";
 import { TimeoutAnswerProvider } from "./providers/timeout-answer-provider.js";
 import { AnswerPolicyProvider } from "./providers/answer-policy-provider.js";
@@ -62,7 +62,11 @@ const provider = new ConversationMemoryProvider(
 );
 const accessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN ?? "";
 if (accessToken) {
-  startWorkers(queue, provider, new HttpLineClient(accessToken, Number(process.env.LINE_SEND_TIMEOUT_MS ?? 10_000)), {
+  startWorkers(queue, provider, new HttpLineClient(
+    accessToken,
+    Number(process.env.LINE_SEND_TIMEOUT_MS ?? 10_000),
+    parseQuickReplies(process.env.LINE_QUICK_REPLIES)
+  ), {
     concurrency: Number(process.env.WORKER_CONCURRENCY ?? 2),
     pollMs: Number(process.env.WORKER_POLL_MS ?? 250),
     leaseMs: Number(process.env.WORKER_LEASE_MS ?? 120_000),
