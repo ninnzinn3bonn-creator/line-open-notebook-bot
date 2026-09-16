@@ -5,6 +5,21 @@ import { resolve } from "node:path";
 
 const status = execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" });
 if (status.trim()) throw new Error("Working tree must be clean before building a delivery package");
+const trackedFiles = execFileSync("git", ["ls-files"], { encoding: "utf8" })
+  .split(/\r?\n/u)
+  .filter(Boolean);
+const forbiddenTrackedFiles = trackedFiles.filter((file) =>
+  file === ".env" ||
+  file.startsWith("secrets/") ||
+  file.startsWith("logs/") ||
+  file.startsWith("notebook_data/") ||
+  file.startsWith("surreal_data/") ||
+  (file.startsWith("evaluation/datasets/private/") && !file.endsWith("/.gitkeep")) ||
+  (file.startsWith("evaluation/results/") && !file.endsWith("/.gitkeep"))
+);
+if (forbiddenTrackedFiles.length) {
+  throw new Error(`Refusing to package forbidden tracked files:\n${forbiddenTrackedFiles.join("\n")}`);
+}
 const revision = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 const short = revision.slice(0, 12);
 const outputDir = resolve(process.argv[2] ?? "release");
