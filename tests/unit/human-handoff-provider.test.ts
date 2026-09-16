@@ -59,4 +59,22 @@ describe("HumanHandoffProvider", () => {
     expect(queue.list("resolved")).toHaveLength(1);
     database.close();
   });
+
+  it("pauses only the handed-off user and resumes after resolution", async () => {
+    const { database, inner, provider, queue } = setup();
+    const handoff = queue.enqueue({ userId: "u1", message: "担当者に相談", reason: "customer_requested_human" });
+
+    const paused = await provider.answer({ message: "予約希望日は明日です", userId: "u1" });
+    const otherUser = await provider.answer({ message: "営業時間は？", userId: "u2" });
+    expect(paused).toMatchObject({ suppressReply: true, text: "" });
+    expect(otherUser.text).toBe("通常回答");
+    expect(inner.answer).toHaveBeenCalledOnce();
+
+    expect(queue.resolve(handoff.id, "対応完了")).toBe(true);
+    const resumed = await provider.answer({ message: "営業時間は？", userId: "u1" });
+    expect(resumed.text).toBe("通常回答");
+    expect(resumed.suppressReply).toBeUndefined();
+    expect(inner.answer).toHaveBeenCalledTimes(2);
+    database.close();
+  });
 });

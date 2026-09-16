@@ -28,7 +28,7 @@ services:
       GROUNDING_OUT_OF_SCOPE_THRESHOLD: ${GROUNDING_OUT_OF_SCOPE_THRESHOLD:-0.60}
       OUT_OF_SCOPE_ANSWER_TEXT: ${OUT_OF_SCOPE_ANSWER_TEXT:-恐れ入りますが、こちらでは店舗に関するお問い合わせを承っています。店舗について確認したいことがございましたら、内容をお聞かせください。}
       REVIEW_PENDING_ANSWER_TEXT: ${REVIEW_PENDING_ANSWER_TEXT:-お問い合わせありがとうございます。恐れ入りますが、そちらの内容は現在このLINEではご案内できません。店舗に関するほかのご質問がございましたら、お尋ねください。}
-      HUMAN_HANDOFF_ANSWER_TEXT: ${HUMAN_HANDOFF_ANSWER_TEXT:-お問い合わせありがとうございます。担当者による確認が必要な内容です。恐れ入りますが、店舗へ直接お問い合わせください。}
+      HUMAN_HANDOFF_ANSWER_TEXT: ${HUMAN_HANDOFF_ANSWER_TEXT:-担当者へ引き継ぎます。このままトーク画面でお待ちください。追加情報がございましたら続けてお送りいただけます。}
       HUMAN_HANDOFF_PHONE: ${HUMAN_HANDOFF_PHONE:-}
       HUMAN_HANDOFF_HOURS: ${HUMAN_HANDOFF_HOURS:-}
       HUMAN_HANDOFF_CHAT_URL: ${HUMAN_HANDOFF_CHAT_URL:-}

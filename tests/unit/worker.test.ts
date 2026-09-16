@@ -49,4 +49,26 @@ describe("worker emergency answer", () => {
     });
     database.close();
   });
+
+  it("completes a paused handoff job without sending a LINE message", async () => {
+    const directory = mkdtempSync(join(tmpdir(), "line-worker-paused-"));
+    directories.push(directory);
+    const database = initializeDatabase(join(directory, "queue.db"));
+    const queue = new JobQueue(database);
+    queue.enqueue({
+      webhookEventId: "evt-paused",
+      userId: "user-paused",
+      replyToken: "reply-paused",
+      receivedAt: new Date().toISOString(),
+      payloadJson: "{}"
+    }, "追加情報です");
+    const provider: AnswerProvider = { answer: vi.fn().mockResolvedValue({ text: "", suppressReply: true, latencyMs: 0 }) };
+    const line: LineClient = { reply: vi.fn(), push: vi.fn() };
+
+    expect(await processNextJob(queue, provider, line, options)).toBe(true);
+    expect(line.reply).not.toHaveBeenCalled();
+    expect(line.push).not.toHaveBeenCalled();
+    expect(database.prepare("SELECT state, send_attempts FROM jobs").get()).toEqual({ state: "succeeded", send_attempts: 0 });
+    database.close();
+  });
 });

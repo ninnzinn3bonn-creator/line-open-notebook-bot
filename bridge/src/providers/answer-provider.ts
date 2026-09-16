@@ -16,6 +16,7 @@ export type ConversationTurn = { role: "user" | "assistant"; text: string };
 
 export type AnswerResult = {
   text: string;
+  suppressReply?: boolean;
   sources?: SourceReference[];
   latencyMs: number;
   promptRevision?: string;

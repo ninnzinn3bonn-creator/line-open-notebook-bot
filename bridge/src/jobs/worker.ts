@@ -39,7 +39,12 @@ export async function processNextJob(
   let emergencyAnswerUsed = false;
   if (!answer) {
     try {
-      answer = (await provider.answer({ message: job.message, userId: job.userId })).text;
+      const result = await provider.answer({ message: job.message, userId: job.userId });
+      if (result.suppressReply) {
+        queue.markSucceeded(job.id);
+        return true;
+      }
+      answer = result.text;
       queue.saveAnswer(job.id, answer);
     } catch (error) {
       const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);

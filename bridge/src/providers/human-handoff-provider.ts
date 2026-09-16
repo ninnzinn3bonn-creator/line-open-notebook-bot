@@ -17,6 +17,16 @@ export class HumanHandoffProvider implements AnswerProvider {
   constructor(private readonly inner: AnswerProvider, private readonly config: HumanHandoffConfig) {}
 
   async answer(input: AnswerInput): Promise<AnswerResult> {
+    if (this.config.queue.hasPendingForUser(input.userId)) {
+      return {
+        text: "",
+        suppressReply: true,
+        latencyMs: 0,
+        route: "needs_review",
+        promptRevision: HUMAN_HANDOFF_REVISION,
+        model: { provider: "bridge", model: "human-handoff-pause-v1" }
+      };
+    }
     const reason = classifyHandoff(input.message);
     if (!reason) return this.inner.answer(input);
     const startedAt = performance.now();

@@ -35,6 +35,12 @@ export class HandoffQueue {
       .all(status, Math.max(1, Math.min(100, limit)));
   }
 
+  hasPendingForUser(userId: string): boolean {
+    return Boolean(this.database.prepare(
+      "SELECT 1 FROM handoff_requests WHERE user_id = ? AND status = 'pending' LIMIT 1"
+    ).get(userId));
+  }
+
   resolve(id: number, note?: string): boolean {
     const now = new Date().toISOString();
     return this.database.prepare(`UPDATE handoff_requests SET status = 'resolved', resolution_note = ?,

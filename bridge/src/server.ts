@@ -53,7 +53,7 @@ const routedProvider = providerName === "open-notebook"
 const provider = new ConversationMemoryProvider(
   new TimeoutAnswerProvider(new HumanHandoffProvider(routedProvider, {
     queue: handoffQueue,
-    answerText: process.env.HUMAN_HANDOFF_ANSWER_TEXT ?? "お問い合わせありがとうございます。担当者による確認が必要な内容です。恐れ入りますが、店舗へ直接お問い合わせください。",
+    answerText: process.env.HUMAN_HANDOFF_ANSWER_TEXT ?? "担当者へ引き継ぎます。このままトーク画面でお待ちください。追加情報がございましたら続けてお送りいただけます。",
     phone: process.env.HUMAN_HANDOFF_PHONE,
     hours: process.env.HUMAN_HANDOFF_HOURS,
     chatUrl: process.env.HUMAN_HANDOFF_CHAT_URL

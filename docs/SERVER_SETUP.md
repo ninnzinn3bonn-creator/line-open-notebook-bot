@@ -162,7 +162,7 @@ Content-Type: application/json
 
 ## 有人移管キュー
 
-明示的な有人希望と、予約確定・返金確定などAIが確定してはいけない要求は、Open Notebookを呼ぶ前に`handoff_requests`へ保存する。実際の転送機能が未接続の間は、設定済み連絡先への案内だけを返す。
+明示的な有人希望と、予約確定・返金確定などAIが確定してはいけない要求は、Open Notebookを呼ぶ前に`handoff_requests`へ保存する。最初の1回だけ引継ぎ案内を返し、pending中は同じLINE user IDへのBot返信を停止する。他のユーザーのBot応答は継続する。担当者はLINE公式チャットで返信し、対応完了後に管理APIでresolveする。次の顧客発話からBotが自動復帰する。
 
 ```http
 GET /internal/handoffs?status=pending&limit=50
@@ -174,10 +174,12 @@ POST /internal/handoffs/{id}/resolve
 Authorization: Bearer <INTERNAL_ADMIN_TOKEN>
 Content-Type: application/json
 
-{"note":"電話対応済み"}
+{"note":"LINE公式チャットで対応完了"}
 ```
 
 案内文と連絡先は`HUMAN_HANDOFF_ANSWER_TEXT`、`HUMAN_HANDOFF_PHONE`、`HUMAN_HANDOFF_HOURS`、`HUMAN_HANDOFF_CHAT_URL`で設定する。未設定の電話番号やURLは回答へ表示しない。
+
+LINE Official Account Managerでチャットと担当者端末の通知を有効にする。Messaging APIのWebhookは有効のまま維持する。LINE公式側の一時手動チャット状態をBridgeの正本にはせず、`handoff_requests.status`を停止・復帰の正本とする。`/internal/*`は公開Webhook hostnameへ露出させない。
 7. LINE DevelopersのWebhook URLを`https://${PUBLIC_HOST}/webhooks/line`へ設定する。
 
 MockのままLINE本番アカウントへ接続しない。

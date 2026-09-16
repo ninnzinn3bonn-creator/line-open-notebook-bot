@@ -23,7 +23,7 @@ export class ConversationMemoryProvider implements AnswerProvider {
     const context = this.store.getOrCreate(input.userId);
     const searchMessage = buildContextualSearchMessage(input.message, context.turns);
     const answer = await this.inner.answer({ ...input, conversationId: context.conversationId, context: context.turns, searchMessage });
-    this.store.appendRally(context, input.message, answer);
+    if (!answer.suppressReply) this.store.appendRally(context, input.message, answer);
     return answer;
   }
 }

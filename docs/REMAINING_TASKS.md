@@ -17,6 +17,7 @@
 - 停止整合性、暗号化、SHA-256検査を備えたOCIバックアップ／復元スクリプト
 - OCI内部サービスと任意の公開URLを検査するヘルスチェックコマンド
 - Ubuntu共通bootstrap、事前診断、障害診断、展開、systemd自動起動、受入れ試験、納品ZIP生成
+- LINE user ID単位の有人対応中Bot停止、他ユーザー継続、resolve後復帰
 
 ## 引き続き認証なしで進められる
 
@@ -35,7 +36,6 @@
 - Access未認証・許可外アカウントの拒否試験とOCI受信ポート検査
 - LINE Webhook URLの固定ホスト名への切替と実端末E2E
 - LINE公式チャットONと外部Messaging API Webhookの併用、管理アプリ通知、手動返信、二重返信の実機確認
-- 公式チャットを有人対応画面として使うLINE user ID単位のBot停止・復帰制御
 - 異なるLINEアカウント2つ以上による複数ユーザー分離試験
 - Groq／Geminiの本番用認証情報設定
 

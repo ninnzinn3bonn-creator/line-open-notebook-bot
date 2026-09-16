@@ -56,6 +56,18 @@ describe("ConversationMemoryProvider", () => {
     expect(vi.mocked(inner.answer).mock.calls[1]![0].searchMessage).toBe("それは？");
     database.close();
   });
+
+  it("does not store a suppressed human-handoff message as a bot rally", async () => {
+    const directory = mkdtempSync(join(tmpdir(), "conversation-paused-"));
+    directories.push(directory);
+    const database = initializeDatabase(join(directory, "queue.db"));
+    const inner: AnswerProvider = { answer: vi.fn(async () => ({ text: "", suppressReply: true, latencyMs: 0 })) };
+    const provider = new ConversationMemoryProvider(inner, new ConversationStore(database, 3));
+    await provider.answer({ message: "追加情報です", userId: "u1" });
+    expect(database.prepare("SELECT rally_count FROM conversations WHERE user_id = 'u1'").get()).toEqual({ rally_count: 0 });
+    expect(database.prepare("SELECT count(*) count FROM conversation_turns").get()).toEqual({ count: 0 });
+    database.close();
+  });
 });
 
 describe("buildContextualSearchMessage", () => {
