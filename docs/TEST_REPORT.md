@@ -65,6 +65,7 @@ PASSはここに記載した範囲だけを表す。PoC完了条件の合格を�
 | 有人移管決定経路 | PASS | 42問版へ有人希望と予約確定要求を追加。Mock Bridge実経路で2/2、Latency最大1ms |
 | 有人移管稼働Bridge確認 | PASS | 稼働中Bridgeで「担当者に相談したいです」がAIを呼ばず`needs_review`となり、pending登録、認証済み管理APIでの一覧取得・対応完了まで確認 |
 | 有人対応中のBot停止・復帰 | PASS (UNIT) / LINE CHAT PENDING | pendingのLINE user IDだけ返信を抑止し、他ユーザーは継続。resolve後に対象ユーザーのBot回答が復帰し、抑止中はLINE送信APIを呼ばないことを確認 |
+| LINE実端末3台同時質問 | PASS (MANUAL) | 2026-09-16、異なる3台から同時にAI回答を要求し、全端末へ通常返信。最も遅い端末は約10秒。質問別の厳密なLatency計測は未実施 |
 | 3ユーザー同時・10件Burst | PASS (AUTOMATED) | 3ワーカー相当を並行実行し最大同時数3、10件すべて1回ずつ送信成功 |
 | 同一ユーザー3連投 | PASS (AUTOMATED) | 3ワーカー相当でも後続が先行処理を追い越さず、message-1、2、3の順で送信 |
 | Provider Timeout・緊急回答 | PASS (AUTOMATED) | 5ms Timeout、有限再試行1回、2回目失敗後に緊急回答を1回だけ送信し、原因を保存 |
