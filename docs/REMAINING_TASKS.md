@@ -1,6 +1,6 @@
 # 残タスク棚卸し
 
-更新日: 2026-09-13
+更新日: 2026-09-16
 
 ## 認証なしで実施済み
 
@@ -34,6 +34,9 @@
 - 本Bot専用Cloudflare Named Tunnel、DNS hostname、Access Application、policy、Tunnel tokenの発行（既存プロジェクトと非共用）
 - Access未認証・許可外アカウントの拒否試験とOCI受信ポート検査
 - LINE Webhook URLの固定ホスト名への切替と実端末E2E
+- LINE公式チャットONと外部Messaging API Webhookの併用、管理アプリ通知、手動返信、二重返信の実機確認
+- 公式チャットを有人対応画面として使うLINE user ID単位のBot停止・復帰制御
+- 異なるLINEアカウント2つ以上による複数ユーザー分離試験
 - Groq／Geminiの本番用認証情報設定
 
 ## 店舗側の情報・承認が必要

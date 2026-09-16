@@ -61,11 +61,12 @@ const provider = new ConversationMemoryProvider(
   conversationStore
 );
 const accessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN ?? "";
+const defaultQuickReplies = "営業時間::営業時間を教えてください|アクセス::お店へのアクセスを教えてください|予約について::予約について教えてください|担当者に相談::担当者に相談したいです";
 if (accessToken) {
   startWorkers(queue, provider, new HttpLineClient(
     accessToken,
     Number(process.env.LINE_SEND_TIMEOUT_MS ?? 10_000),
-    parseQuickReplies(process.env.LINE_QUICK_REPLIES)
+    parseQuickReplies(process.env.LINE_QUICK_REPLIES ?? defaultQuickReplies)
   ), {
     concurrency: Number(process.env.WORKER_CONCURRENCY ?? 2),
     pollMs: Number(process.env.WORKER_POLL_MS ?? 250),

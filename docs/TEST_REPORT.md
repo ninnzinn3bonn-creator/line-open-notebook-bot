@@ -75,6 +75,7 @@ PASSはここに記載した範囲だけを表す。PoC完了条件の合格を�
 | OCI内部監視 | READY / REAL HOST PENDING | 5サービスのrunning状態、Bridge・Open Notebook内部Health、任意のTunnel外形URLを検査するコマンドを実装。通知先はMMP承認待ち |
 | 納品運用パッケージ | READY / CLEAN VM PENDING | Ubuntu共通bootstrap、doctor、deploy、diagnose、systemd、acceptance、release ZIP生成と移管ランブックを実装。空VM復元試験は未実施 |
 | 納品運用パッケージ静的検証 | PASS | ShellCheck全スクリプト、TypeScript build、39 unit tests、tunnel/direct Compose解決、両Caddyfile検証に成功 |
+| LINEクイックリプライ | PASS (UNIT) / DEVICE PENDING | 回答末尾へ営業時間、アクセス、予約、担当者相談の4項目を付与。文字数制限と不正設定除外を自動試験済み |
 | Webhook再送重複排除 | PASS (INTEGRATION) | 同じ署名済みWebhook event IDを2回送信し、HTTP 200を返しつつjobが1件だけ保存されることを確認 |
 | 実店舗データ受入れ検査 | PASS (TEMPLATE) | `npm run store-data:validate`で必須項目、FAQ ID重複、配列型、公開可否を検査。テンプレート1件でPASS |
 | PoC提出レポート骨組み | READY | 固定Revision、受入れ結果、品質・費用、MMP差分、初月観測、既知制約の章を作成 |
