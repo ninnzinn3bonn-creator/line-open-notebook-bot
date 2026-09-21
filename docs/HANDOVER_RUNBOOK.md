@@ -12,8 +12,11 @@ Windows開発PCのDocker Desktopや一時Tunnelに依存せず、Ubuntu上へ同
 - `.env.example`
 - 展開、診断、受入れ、バックアップ、復元スクリプト
 - 要件定義、セキュリティレビュー、テスト報告
+- クライアント向けKnowledge登録・変更・削除手順
 
 `.env`、API key、Tunnel token、DB、ログ、会話履歴、実店舗の非公開データ、生成済み評価結果は納品ZIPへ含めない。
+
+納品後のFAQ運用は[クライアント向けKnowledge登録・変更・削除手順](CLIENT_KNOWLEDGE_OPERATIONS.md)を使用する。
 
 ## 新規Ubuntuへの展開
 
