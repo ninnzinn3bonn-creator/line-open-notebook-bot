@@ -13,12 +13,12 @@
 | 項目 | 値 |
 |---|---|
 | Open Notebook | 1.14.0 |
-| Strategy / Answer / Final | 要実測記録 |
-| Embedding | 要実測記録 |
+| Strategy / Answer / Final | Groq `openai/gpt-oss-120b`（Open Notebook record IDは環境別manifestへ記録） |
+| Embedding | Google `gemini-embedding-001` |
 | Knowledge revision | 実店舗データ受領後に確定 |
-| Query mode | 要確定 |
-| Prompt revision | 要確定 |
-| Dataset revision | 要確定 |
+| Query mode | Open Notebook simple ask＋Bridge vector grounding gate |
+| Prompt revision | `storefront-ja-v002`、`vector-gate-v001`、`human-handoff-v001`、`three-rallies-v001` |
+| Dataset revision | 合成`synthetic-store-v003`、実店舗版は受領後生成 |
 
 ## 3. 受入れ結果
 
@@ -26,12 +26,15 @@
 |---|---|---|
 | 実店舗Golden Dataset | 未実施 | 実データ受領待ち |
 | LINE E2E | 一部確認済み | 正式記録待ち |
+| LINE実端末3台同時 | PASS | 全端末へ返信、最遅約10秒 |
 | 同時3件・10件Burst | ローカル自動試験PASS | OCI再試験待ち |
 | 重複Webhook | ローカル自動試験PASS | LINE実試験待ち |
 | Timeout・緊急回答 | ローカル自動試験PASS | OCI再試験待ち |
 | 再起動復旧 | ローカル自動試験PASS | OCI再試験待ち |
 | Cloudflare Tunnel障害 | 未実施 | 固定Tunnel作成待ち |
 | バックアップ復元 | 未実施 | OCI作成待ち |
+
+ローカル自動試験、構成検査、実端末確認の詳細は[TEST_REPORT.md](TEST_REPORT.md)を正本とする。実店舗・OCI・固定Tunnelが必要な項目は、未実施のまま合格扱いにしない。
 
 ## 4. 品質・性能・費用
 

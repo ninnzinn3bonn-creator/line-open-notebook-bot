@@ -52,6 +52,9 @@ JSONへ正規化した後は、次のコマンドで必須項目、FAQ ID重複�
 
 ```powershell
 npm run store-data:validate -- evaluation/datasets/private/store-v001.json
+npm run store-data:prepare -- evaluation/datasets/private/store-v001.json evaluation/datasets/private/prepared/store-v001
 ```
+
+`store-data:prepare`は公開可のFAQだけから`knowledge.md`、質問表現ごとの`golden-dataset.json`、入力SHA-256と件数を持つ`manifest.json`を生成する。生成先もGit管理外に置く。Golden Datasetの`expectedFacts`は承認回答原文を初期値にするため、回帰実行前に店舗担当者が事実単位へ分割し、禁止事実とseverityを確認する。
 
 入力形式は`evaluation/datasets/store-data.template.json`をコピーして使用する。テンプレートのダミー値を実データとして投入しない。

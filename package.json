@@ -9,6 +9,8 @@
     "eval": "tsx evaluation/runner/index.ts",
     "line:preflight": "node scripts/line-e2e-preflight.mjs",
     "store-data:validate": "node scripts/validate-store-data.mjs",
+    "store-data:prepare": "node scripts/prepare-store-data.mjs",
+    "images:verify-arm64": "node scripts/verify-multiarch.mjs",
     "source:synthetic": "node scripts/register-synthetic-source.mjs",
     "release:build": "node scripts/build-release.mjs",
     "inspect:openapi": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/inspect-openapi.ps1"

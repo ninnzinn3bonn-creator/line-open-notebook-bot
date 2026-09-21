@@ -17,6 +17,8 @@ Windows開発PCのDocker Desktopや一時Tunnelに依存せず、Ubuntu上へ同
 
 ## 新規Ubuntuへの展開
 
+OCIへ納品時と同条件で移す事前演習は[OCI移管リハーサル](OCI_MIGRATION_REHEARSAL.md)に従う。
+
 ```bash
 unzip line-open-notebook-bot-<revision>.zip -d /opt/line-open-notebook-bot
 cd /opt/line-open-notebook-bot

@@ -1,6 +1,6 @@
 # 残タスク棚卸し
 
-更新日: 2026-09-16
+更新日: 2026-09-22
 
 ## 認証なしで実施済み
 
@@ -19,15 +19,17 @@
 - Ubuntu共通bootstrap、事前診断、障害診断、展開、systemd自動起動、受入れ試験、納品ZIP生成
 - LINE user ID単位の有人対応中Bot停止、他ユーザー継続、resolve後復帰
 
-## 引き続き認証なしで進められる
+## 認証なしで追加実装済み
 
-- 実店舗データ受領後の変換ツール（実データをGitへ保存せず実行）
+- 実店舗データ受領後のKnowledge変換ツール（非公開FAQ除外、SHA-256 manifest）
 - 実店舗由来Golden Datasetの生成補助と機械検査
-- MMP要件の初期値、合否表、PoCとの差分表の整備
+- MMP要件の暫定合否値、証拠、PoCとの差分表
+
+## ローカルでは完了判定できない実機検証
 - OCI実機でのバックアップ・新規データ領域への復元試験
 - Tunnel停止、Provider障害、重複Webhookの追加自動試験
-- OCI Arm64で固定image digestの起動照合
-- TEST_REPORTとPoC提出レポートへの検証結果反映
+- OCI Arm64で固定image digestの実起動照合（4イメージのArm64 manifest存在は確認済み）
+- TEST_REPORTとPoC提出レポートへのOCI・実店舗検証結果反映
 
 ## 外部認証・利用者操作が必要
 
