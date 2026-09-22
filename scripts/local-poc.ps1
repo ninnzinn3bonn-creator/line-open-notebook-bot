@@ -17,7 +17,10 @@ function New-RandomSecret([int]$ByteCount = 32) {
 }
 
 function Assert-Docker {
-    $script:dockerCommand = (Get-Command docker -ErrorAction SilentlyContinue)?.Source
+    $dockerLookup = Get-Command docker -ErrorAction SilentlyContinue
+    if ($dockerLookup) {
+        $script:dockerCommand = $dockerLookup.Source
+    }
     if (-not $script:dockerCommand) {
         $installedDocker = Join-Path $env:ProgramFiles "Docker\Docker\resources\bin\docker.exe"
         if (Test-Path $installedDocker) {

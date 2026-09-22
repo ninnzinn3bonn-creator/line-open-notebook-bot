@@ -17,3 +17,7 @@ evaluation/baselines/*.json
 logs/
 openapi/openapi.json
 release/
+.wrangler/
+.dev.vars
+.dev.vars.*
+DETA/
